@@ -12,6 +12,6 @@
     --blue-hover: #6d7af1;
 }
 
-body {
+* {
     font-family: 'Prompt', sans-serif;
 }

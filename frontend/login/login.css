@@ -24,7 +24,7 @@ body {
     gap: 6px;
     color: var(--text-white);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     transition: opacity 0.2s;
 }
@@ -199,4 +199,78 @@ body {
 
 .signup a:hover {
     text-decoration: underline;
+}
+
+/* Responsive */
+/* Tablet */
+@media (max-width: 768px) {
+    .back-home {
+        top: 50px;
+        left: 40px;
+        font-size: 14px;
+    }
+
+    .card {
+        padding: 25px 25px;
+        max-width: 70%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .back-home {
+        top: 30px;
+        left: 15px;
+        font-size: 14px;
+    }
+
+    .main-content {
+        gap: 15px;
+        width: 70%;
+    }
+
+    .logo {
+        font-size: 17px;
+    }
+
+    .card {
+        border-radius: 18px;
+        padding: 15px 20px;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .card h1 {
+        font-size: 16px;
+    }
+
+    .field label {
+        font-size: 12px;
+    }
+
+    .field input[type="email"],
+    .field input[type="password"],
+    .field input[type="text"] {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .field-error {
+        font-size: 10px;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1px;
+    }
+
+    .login-btn {
+        padding: 13px;
+        font-size: 14px;
+    }
+
+    .signup {
+        font-size: 12px;
+    }
 }
