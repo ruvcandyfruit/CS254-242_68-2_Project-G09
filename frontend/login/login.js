@@ -31,7 +31,7 @@ function validateEmail() {
   const emailPattern = /^.+@gmail\.com$/;
 
   if (!emailPattern.test(emailValue)) {
-    emailError.textContent = "กรุณากรอกอีเมลในรูปแบบ 'example@gmail.com'.";
+    emailError.textContent = "กรุณากรอกอีเมลในรูปแบบ 'example@gmail.com'";
     console.log("Validation Failed");
     return false;
   } else {
