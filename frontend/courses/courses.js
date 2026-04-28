@@ -60,7 +60,6 @@ function saveNewCourse() {
         <div class="course-card-top">
             <div class="course-avatar">${prefix}</div>
             <div class="course-card-top-right">
-                <span class="course-credits">${credits} หน่วยกิต</span>
                 <div class="course-menu">
                     <button class="course-menu-btn">
                         <img src="../assets/icons/ellipsis.svg">
@@ -77,13 +76,16 @@ function saveNewCourse() {
             </div>
         </div>
         <div class="course-info">
-            <span class="course-code">${code}</span>
+            <div class="code-credit">
+                <span class="course-code">${code}</span>
+                <span class="course-credits">${credits} หน่วยกิต</span>
+            </div>
             <h2 class="course-name">${name}</h2>
         </div>
         <span class="course-divider"></span>
         <div class="course-footer">
             <span class="course-alltasks">ทั้งหมด 0 งาน</span>
-            <span class="course-tasks">ดูงานค้าง 0 งาน</span>
+            <span class="course-tasks">งานค้าง 0 งาน</span>
         </div>
     `;
 

@@ -318,3 +318,145 @@
 input::placeholder {
     color: #bbb;
 }
+
+/*alert box*/
+.swal2-popup {
+    width: 500px;
+    border-radius: 16px;
+}
+
+.swal2-title {
+    font-size: 20px;
+}
+
+.swal2-html-container {
+    padding-top: 0px;
+    font-size: 16px;
+}
+
+.swal2-confirm {
+    width: 50px;
+    height: 35px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.swal2-cancel {
+    width: 70px;
+    height: 35px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+/* Responsive */
+/* Tablet */
+@media (max-width: 768px) {
+    .courses-header h1 {
+        font-size: 18px;
+    }
+
+    .add-course-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        gap: 3px;
+    }
+
+    .courses-list {
+        gap: 10px;
+        padding: 16px 0;
+    }
+
+    .course-card {
+        padding: 20px;
+        width: 100%;
+        gap: 0px;
+    }
+
+    .course-code,
+    .course-credits {
+        font-size: 12px;
+    }
+
+    .course-name {
+        font-size: 14px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .courses-header h1 {
+        font-size: 16px;
+    }
+
+    .courses-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .add-course-btn {
+        padding: px 5px;
+        align-self: flex-end;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .add-course-btn img {
+        display: none;
+    }
+
+    .course-avatar {
+        font-size: 12px;
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+    }
+
+    .course-dropdown {
+        min-width: 120px;
+
+    }
+
+    .course-dropdown button {
+        font-size: 10px;
+    }
+
+    .courses-list {
+        gap: 15px;
+    }
+
+    .course-card {
+        padding: 10px;
+        gap: 0px;
+    }
+
+    .course-code,
+    .course-credits {
+        font-size: 10px;
+        font-weight: 400;
+    }
+
+    .course-name {
+        font-size: 12px;
+    }
+
+    .course-footer {
+        font-size: 10px;
+    }
+
+    /*alert box*/
+    .swal2-popup {
+        width: 300px;
+    }
+
+    .swal2-title {
+        font-size: 18px;
+    }
+
+    .swal2-html-container {
+        padding: 0px 25px;
+        font-size: 12px;
+    }
+
+}
