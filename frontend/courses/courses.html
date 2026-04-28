@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="courses.css">
+</head>
+
+<body>
+    <div class="main-content">
+        <div class="courses-header">
+            <h1>รายวิชาของฉัน</h1>
+            <button class="add-course-btn" onclick="addCourse()">
+                <img src="../assets/icons/add.svg"> เพิ่มรายวิชา
+            </button>
+        </div>
+
+        <div class="courses-list">
+            <div class="course-card">
+                <div class="course-card-top">
+                    <div class="course-avatar">CS</div>
+                    <div class="course-card-top-right">
+                        <span class="course-credits">3 หน่วยกิต</span>
+                        <div class="course-menu">
+                            <button class="course-menu-btn" onclick="toggleMenu(this)">
+                                <img src="../assets/icons/ellipsis.svg">
+                            </button>
+                            <div class="course-dropdown">
+                                <button onclick="editCourse(this)">
+                                    <img src="../assets/icons/edit.svg"> แก้ไขรายวิชา
+                                </button>
+                                <button class="danger" onclick="deleteCourse(this)">
+                                    <img src="../assets/icons/trash.svg"> ลบรายวิชา
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-info">
+                    <span class="course-code">CS361</span>
+                    <h2 class="course-name">Software Engineering</h2>
+                </div>
+                <span class="course-divider"></span>
+                <div class="course-footer">
+                    <span class=".course-alltasks">ทั้งหมด 2 งาน</span>
+                    <span class="course-tasks">ดูงานค้าง 1 งาน</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- การ์ดเพิ่มรายวิชา -->
+    <div class="box-overlay" id="addCourseBox">
+        <div class="box">
+            <div class="box-header">
+                <h2>เพิ่มวิชาเรียน</h2>
+                <button class="box-close" onclick="closeBox()">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+            <div class="box-body">
+                <div class="box-row">
+                    <div class="box-field">
+                        <label>รหัสวิชา</label>
+                        <input type="text" id="input-code" placeholder="CS261">
+                    </div>
+                    <div class="box-field">
+                        <label>หน่วยกิต</label>
+                        <input type="number" id="input-credits" placeholder="3" min="1">
+                    </div>
+                </div>
+                <div class="box-field">
+                    <label>ชื่อวิชา</label>
+                    <input type="text" id="input-name" placeholder="Software Engineering">
+                </div>
+            </div>
+            <div class="box-footer">
+                <button class="btn-cancel" onclick="closeBox()">ยกเลิก</button>
+                <button class="btn-save" onclick="saveNewCourse()">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="courses.js"></script>
+</body>
+
+</html>

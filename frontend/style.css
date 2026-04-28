@@ -1,11 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
+    /*สีพื้นหลังlogin*/
     --background-linear: linear-gradient(135deg, #6b82f5 0%, #a8c8f8 50%, #c5d8f8 100%);
+    /*สีพื้นหลังหลัก*/
+    --background-primary: #ffffff;
+
     /*สีข้อความสีดำ*/
     --text-black: #222;
-    /*สีข้อความสีขาว*/
+    /*สีข้อความสีขาวนวล*/
     --text-white: #fefefe;
+    /*สีข้อความสีเทา*/
+    --gray: #9ca3af;
+    /*สีข้อความสีแดง*/
+    --red: #dc2626;
+
+    /*สีขอบกล่องสีเทาอ่อน*/
+    --gray-border: #e5e7eb;
+
+    /*สีพื้นหลังปุ่มสีเทาอ่อน*/
+    --gray-light: #f9fafb;
+    --gray-secondary: #f3f4f6;
 
     /*primary color*/
     --blue: #5b6af0;
