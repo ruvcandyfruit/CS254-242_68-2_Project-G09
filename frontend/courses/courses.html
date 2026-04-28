@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
     <div class="main-content">
         <div class="courses-header">
             <h1>รายวิชาของฉัน</h1>
-            <button class="add-course-btn" onclick="addCourse()">
+            <button class="add-course-btn">
                 <img src="../assets/icons/add.svg"> เพิ่มรายวิชา
             </button>
         </div>
@@ -25,14 +25,14 @@
                     <div class="course-card-top-right">
                         <span class="course-credits">3 หน่วยกิต</span>
                         <div class="course-menu">
-                            <button class="course-menu-btn" onclick="toggleMenu(this)">
+                            <button class="course-menu-btn">
                                 <img src="../assets/icons/ellipsis.svg">
                             </button>
                             <div class="course-dropdown">
-                                <button onclick="editCourse(this)">
+                                <button data-action="edit">
                                     <img src="../assets/icons/edit.svg"> แก้ไขรายวิชา
                                 </button>
-                                <button class="danger" onclick="deleteCourse(this)">
+                                <button class="danger" data-action="delete">
                                     <img src="../assets/icons/trash.svg"> ลบรายวิชา
                                 </button>
                             </div>
@@ -46,18 +46,18 @@
                 <span class="course-divider"></span>
                 <div class="course-footer">
                     <span class=".course-alltasks">ทั้งหมด 2 งาน</span>
-                    <span class="course-tasks">ดูงานค้าง 1 งาน</span>
+                    <span class="course-tasks">งานค้าง 1 งาน</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- การ์ดเพิ่มรายวิชา -->
-    <div class="box-overlay" id="addCourseBox">
+    <form class="box-overlay" id="addCourseBox">
         <div class="box">
             <div class="box-header">
                 <h2>เพิ่มวิชาเรียน</h2>
-                <button class="box-close" onclick="closeBox()">
+                <button type="button" class="box-close" id="addCourseClose">
                     <img src="../assets/icons/close.svg">
                 </button>
             </div>
@@ -65,26 +65,61 @@
                 <div class="box-row">
                     <div class="box-field">
                         <label>รหัสวิชา</label>
-                        <input type="text" id="input-code" placeholder="CS261">
+                        <input type="text" id="input-code" placeholder="CS261" required>
                     </div>
                     <div class="box-field">
                         <label>หน่วยกิต</label>
-                        <input type="number" id="input-credits" placeholder="3" min="1">
+                        <input type="number" id="input-credits" placeholder="3" min="1" required>
                     </div>
                 </div>
                 <div class="box-field">
                     <label>ชื่อวิชา</label>
-                    <input type="text" id="input-name" placeholder="Software Engineering">
+                    <input type="text" id="input-name" placeholder="Software Engineering" required>
                 </div>
             </div>
             <div class="box-footer">
-                <button class="btn-cancel" onclick="closeBox()">ยกเลิก</button>
-                <button class="btn-save" onclick="saveNewCourse()">บันทึก</button>
+                <button type="button" class="btn-cancel" id="addCourseCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
             </div>
         </div>
-    </div>
+    </form>
+
+    <!-- การ์ดแก้ไขรายวิชา -->
+    <form class="box-overlay" id="editCourseBox">
+        <div class="box">
+            <div class="box-header">
+                <h2>แก้ไขรายวิชา</h2>
+                <button type="button" class="box-close" id="editCourseClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+            <div class="box-body">
+                <div class="box-row">
+                    <div class="box-field">
+                        <label>รหัสวิชา</label>
+                        <input type="text" id="edit-code" placeholder="CS261" required>
+                    </div>
+                    <div class="box-field">
+                        <label>หน่วยกิต</label>
+                        <input type="number" id="edit-credits" placeholder="3" min="1" required>
+                    </div>
+                </div>
+                <div class="box-field">
+                    <label>ชื่อวิชา</label>
+                    <input type="text" id="edit-name" placeholder="Software Engineering" required>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="button" class="btn-cancel" id="editCourseCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
+            </div>
+        </div>
+    </form>
 
     <script src="courses.js"></script>
+
+    <!--sweet alert submit success-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>
