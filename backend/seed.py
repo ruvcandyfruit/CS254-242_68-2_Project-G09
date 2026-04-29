@@ -1,8 +1,8 @@
 from app import create_app
 from app.models import db
-from backend.app.models.user_model import User
-from backend.app.models.course_model import Course
-from backend.app.models.task_model import Task
+from app.models.user_model import User
+from app.models.course_model import Course
+from app.models.task_model import Task
 from datetime import datetime
 
 app = create_app()
