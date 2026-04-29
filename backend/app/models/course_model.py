@@ -4,10 +4,54 @@ class Course(db.Model):
     __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    course_code = db.Column(db.String(20), nullable=False)
-    course_weight = db.Column(db.Float, default=1.0)
+    _name = db.Column(db.String(255), nullable=False)
+    _course_code = db.Column(db.String(20), nullable=False)
+    _course_weight = db.Column(db.Float, default=1.0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     tasks = db.relationship('Task', backref='course', lazy=True)
+
+    # constructor
+    def __init__(self, name, course_code, course_weight, user_id):
+        self.set_name(name)
+        self.set_course_code(course_code)
+        self.set_course_weight(course_weight)
+        self.user_id = user_id
+
+    # getter
+    def get_id(self):
+        return self.id
+
+    def get_name(self):
+        return self._name
+
+    def get_course_code(self):
+        return self._course_code
+
+    def get_course_weight(self):
+        return self._course_weight
+
+    # setter /validation
+    def set_name(self, name):
+        if not name:
+            raise ValueError("Name cannot be empty")
+        self._name = name
+
+    def set_course_code(self, code):
+        if not code:
+            raise ValueError("Course code required")
+        self._course_code = code
+
+    def set_course_weight(self, weight):
+        if weight is None or float(weight) <= 0:
+            raise ValueError("Weight must be > 0")
+        self._course_weight = float(weight)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self._name,
+            "course_code": self._course_code,
+            "course_weight": self._course_weight
+        }
