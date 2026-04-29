@@ -18,9 +18,9 @@ def create_course(name, course_code, course_weight, user_id):
         course = Course(name, course_code, course_weight, user_id)
         db.session.add(course)
         db.session.commit()
-        return course
+        return course, None
     except ValueError as e:
-        return None
+        return None, str(e)
 
 
 def update_course(course_id, data):

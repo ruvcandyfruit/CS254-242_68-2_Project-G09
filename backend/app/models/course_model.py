@@ -4,9 +4,9 @@ class Course(db.Model):
     __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), nullable=False)
-    _course_code = db.Column(db.String(20), nullable=False)
-    _course_weight = db.Column(db.Float, default=1.0)
+    _name = db.Column("name", db.String(255), nullable=False)
+    _course_code = db.Column("course_code", db.String(20), nullable=False)
+    _course_weight = db.Column("course_weight",db.Float, default=1.0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
@@ -55,3 +55,11 @@ class Course(db.Model):
             "course_code": self._course_code,
             "course_weight": self._course_weight
         }
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        self.set_name(value)
