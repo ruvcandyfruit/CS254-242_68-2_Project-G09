@@ -43,3 +43,15 @@ def update_course(course_id, data):
 
     except ValueError as e:
         return None, str(e)
+
+def delete_course(course_id):
+    course = Course.query.get(course_id)
+    if not course:
+        return "Course not found"
+
+    try:
+        db.session.delete(course)
+        db.session.commit()
+        return None
+    except Exception as e:
+        return str(e)

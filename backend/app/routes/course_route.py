@@ -3,7 +3,8 @@ from app.services.course_service import (
     get_all_courses,
     get_course_by_id,
     create_course,
-    update_course
+    update_course,
+    delete_course
 )
 
 course_bp = Blueprint('course', __name__)
@@ -52,3 +53,11 @@ def update(course_id):
     if error:
         return jsonify({"error": error}), 400
     return jsonify({"message": "Course updated"}),200
+
+
+@course_bp.route('/<int:course_id>', methods=['DELETE'])
+def delete(course_id):
+    error = delete_course(course_id)
+    if error:
+        return jsonify({"error": error}), 404
+    return jsonify({"message": "Course deleted"}), 200
