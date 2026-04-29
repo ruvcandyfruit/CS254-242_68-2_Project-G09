@@ -18,16 +18,20 @@ def get_notifications(user_id):
         .all()
     )
 
-    result = []
-    for task in tasks:
-        days_left = (task.deadline.date() - today).days
-        result.append({
-            "task_id": task.id,
+    task_list = [
+        {
+            "id": task.id,
             "title": task.title,
-            "deadline": task.deadline.strftime("%Y-%m-%d"),
-            "days_left": days_left,
-            "emergency": task.emergency,
-            "status": task.status,
-        })
+            "deadline": task.deadline.strftime("%Y-%m-%dT%H:%M:%S"),
+        }
+        for task in tasks
+    ]
 
-    return result
+    count = len(task_list)
+
+    return {
+        "count": count,
+        "message": f"You have {count} task(s) due in the next 3 days",
+        "tasks": task_list,
+        "type": "DUE_SOON_3D"
+    }
