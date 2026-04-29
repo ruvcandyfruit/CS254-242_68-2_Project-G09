@@ -111,7 +111,6 @@ const addtaskCard = document.getElementById("addtask-card");
 
 function populateCourseSelect() {
     const select = document.getElementById("inputCourse");
-    const courses = JSON.parse(localStorage.getItem("courses") || "[]");
     if (courses.length === 0) {
         select.innerHTML = Object.entries(courseColors)
             .map(([code, color]) => `<option value="${code}|${color}">${code}</option>`)
