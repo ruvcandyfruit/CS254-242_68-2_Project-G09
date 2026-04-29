@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการงาน</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="allTasks.css">
+</head>
+
+<body>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>รายการงาน</h1>
+            </div>
+            <button class="btn-add" id="btnAddTask">
+                <img src="../assets/icons/add.svg">เพิ่มงาน
+            </button>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="toolbar">
+            <div class="search-wrapper">
+                <img src="../assets/icons/search.svg">
+                <input type="text" class="search-input" id="searchInput" placeholder="ค้นหา">
+            </div>
+            <div class="filter-tabs">
+                <button class="tab active" data-filter="all">ทั้งหมด</button>
+                <button class="tab" data-filter="inprogress">กำลังทำ</button>
+                <button class="tab" data-filter="urgent">ด่วน</button>
+                <button class="tab" data-filter="done">เสร็จแล้ว</button>
+            </div>
+            <div class="course-filter-wrapper">
+                <button class="btn-course-filter" id="btnCourseFilter">
+                    <span id="courseFilterLabel">วิชา</span>
+                    <img src="../assets/icons/dropdown.svg">
+                </button>
+                <div class="course-dropdown" id="courseDropdown"></div>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="task-list" id="taskList"></div>
+    </div>
+
+    <!-- Add Task Card -->
+    <form class="card-overlay" id="addtask-card">
+        <div class="card">
+            <div class="card-header">
+                <h2>เพิ่มงานใหม่</h2>
+                <button type="button" class="card-close" id="modalClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-field">
+                    <label>ชื่องาน</label>
+                    <input type="text" id="inputName" placeholder="Lab 5" required>
+                </div>
+
+                <div class="card-field">
+                    <label>วิชา</label>
+                    <select id="inputCourse">
+                        <!--<img src="../assets/icons/dropdown.svg">-->
+                    </select>
+
+                </div>
+
+                <div class="card-row">
+                    <div class="card-field">
+                        <label>เวลาประมาณ (ชม.)</label>
+                        <input type="number" id="inputHours" placeholder="2">
+                    </div>
+                    <div class="card-field">
+                        <label>น้ำหนักคะแนน (%)</label>
+                        <input type="number" id="inputScore" placeholder="3" min="0" max="100" required>
+                    </div>
+                </div>
+
+                <div class="card-field">
+                    <label>กำหนดส่ง</label>
+                    <input type="date" id="inputDue" required>
+                </div>
+
+                <div class="card-field">
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-title">งานเร่งด่วน</div>
+                            <div class="toggle-desc">ระบบจะดันความสำคัญขึ้น</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="inputUrgent">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn-cancel" id="btnCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save" id="btnSave">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="allTasks.js"></script>
+</body>
+
+</html>
