@@ -1,14 +1,36 @@
-from app.models.user_model import User
+from werkzeug.security import check_password_hash
+
 from app.models import db
+from app.models.user_model import User
 
-def login_user(email, password):
-    user = User.query.filter_by(email=email).first()
 
-    if not user:
-        return None, "User not found"
+class AuthService:
 
-    # FIX: use werkzeug from flask to hash password
-    if user.password != password:
-        return None, "Invalid password"
+    def register_user(self, username, email, password):
+        email = email.lower().strip()
 
-    return user, None
+        if User.query.filter_by(email=email).first():
+            return None, "Email already registered"
+
+        try:
+            user = User(username=username, email=email, password=password)
+        except ValueError as e:
+            return None, str(e)
+
+        db.session.add(user)
+        db.session.commit()
+
+        return user, None
+
+    def login_user(self, email, password):
+        email = email.lower().strip()
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return None, "User not found"
+
+        if not user.check_password(password, check_password_hash):
+            return None, "Invalid password"
+
+        return user, None
