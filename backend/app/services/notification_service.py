@@ -31,12 +31,12 @@ class NotificationService:
     def serialize(self, task):
         return {
             "id": task.id,
-            "title": task.title,
-            "description": task.description,
-            "deadline": task.deadline.strftime("%Y-%m-%dT%H:%M:%S"),
-            "duration": task.duration,
-            "emergency": task.emergency,
-            "score_weight": task.score_weight,
+            "title": task._title,
+            "description": task._description,
+            "deadline": task._deadline.strftime("%Y-%m-%dT%H:%M:%S"),
+            "duration": task._duration,
+            "emergency": task._emergency,
+            "score_weight": task._score_weight,
             "course_id": task.course_id,
         }
 
@@ -50,10 +50,10 @@ class NotificationService:
             .join(Course, Task.course_id == Course.id)
             .filter(
                 Course.user_id == self._user_id,
-                Task.status != "done",
-                Task.deadline < now   
+                Task._status != "done",
+                Task._deadline < now   
             )
-            .order_by(Task.deadline.asc())
+            .order_by(Task._deadline.asc())
             .all()
         )
 
@@ -63,11 +63,11 @@ class NotificationService:
             .join(Course, Task.course_id == Course.id)
             .filter(
                 Course.user_id == self._user_id,
-                Task.status != "done",
-                Task.deadline >= now,
-                Task.deadline <= threshold
+                Task._status != "done",
+                Task._deadline >= now,
+                Task._deadline <= threshold
             )
-            .order_by(Task.deadline.asc())
+            .order_by(Task._deadline.asc())
             .all()
         )
 

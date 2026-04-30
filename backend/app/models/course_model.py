@@ -57,7 +57,7 @@ class Course(db.Model):
         return len(self.tasks)
 
     def get_completed_tasks(self):
-        return [t for t in self.tasks if t.status == "done"]
+        return [t for t in self.tasks if t.get_status() == "done"]
 
     # business logic
     def calculate_progress(self):

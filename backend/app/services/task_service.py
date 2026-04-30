@@ -60,7 +60,7 @@ class TaskService:
         return {
             "id": task.id,
             "title": task.get_title(),
-            "description": task.description,
+            "description": task.get_description(),
             "deadline": task.get_deadline().isoformat(),
             "duration": task.get_duration(),
             "emergency": task.is_emergency(),

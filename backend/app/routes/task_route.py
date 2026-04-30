@@ -50,7 +50,7 @@ def get_all():
         {
             "id": t.id,
             "title": t.get_title(),
-            "description": t.description,
+            "description": t.get_description(),
             "deadline": t.get_deadline().isoformat(),
             "duration": t.get_duration(),
             "emergency": t.is_emergency(),
@@ -89,7 +89,7 @@ def get_one(task_id):
     return jsonify({
         "id": t.id,
         "title": t.get_title(),
-        "description": t.description,
+        "description": t.get_description(),
         "deadline": t.get_deadline().isoformat(),
         "duration": t.get_duration(),
         "emergency": t.is_emergency(),

@@ -6,7 +6,7 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     _title = db.Column("title", db.String(255), nullable=False)
-    description = db.Column(db.Text)
+    _description = db.Column("description", db.Text)
     _deadline = db.Column("deadline", db.DateTime, nullable=False)
     _duration = db.Column("duration", db.Integer)
     _emergency = db.Column("emergency", db.Boolean, default=False)
@@ -24,8 +24,7 @@ class Task(db.Model):
         self.set_duration(duration)
         self._emergency = emergency
         self._status = "pending"
-
-        self.description = description
+        self.set_description(description)
         self.course_id = course_id
 
     # getter / setter
@@ -36,6 +35,16 @@ class Task(db.Model):
         if not title or len(title.strip()) == 0:
             raise ValueError("Title cannot be empty")
         self._title = title
+
+    def get_description(self):
+        return self._description
+    
+    def set_description(self, description):
+        # ถ้าเป็น string ว่าง → เก็บเป็น None แทน
+        if description == "":
+            self._description = None
+        else:
+            self._description = description
 
     def get_deadline(self):
         return self._deadline

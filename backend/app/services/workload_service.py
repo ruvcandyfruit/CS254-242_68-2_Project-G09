@@ -22,8 +22,8 @@ def get_workload_analysis(user_id, mode="weekly"):
             Task.query
             .join(Course)
             .filter(Course.user_id == user_id)
-            .filter(Task.duration.isnot(None))
-            .filter(Task.deadline.isnot(None))
+            .filter(Task._duration != None)
+            .filter(Task._deadline != None)
             .all()
         )
     except Exception as e:
