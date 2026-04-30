@@ -80,7 +80,7 @@ form.addEventListener('submit', async (e) => {
       storage.setItem('username', user.username ?? '');
       storage.setItem('email', user.email ?? emailVal);
 
-      window.location.href = '../dashboard/dashboard.html';
+      window.location.href = '/frontend/dashboard/dashboard.html';
     } else {
       passwordError.textContent = data.error || data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
     }
