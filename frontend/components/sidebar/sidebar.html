@@ -1,0 +1,52 @@
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">
+      <i data-lucide="graduation-cap"></i>
+    </div>
+    <div>
+      <div class="brand-title">WorkFlow</div>
+      <div class="brand-sub">จัดการ workload</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav" data-sidebar-nav>
+    <a href="../dashboard/dashboard.html" data-route="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>ภาพรวม</span>
+    </a>
+
+    <a href="../allTasks/allTasks.html" data-route="tasks">
+      <i data-lucide="list-checks"></i>
+      <span>รายการงาน</span>
+    </a>
+
+    <!-- ✅ เพิ่มตรงนี้ -->
+    <a href="../notifications/notifications.html" data-route="notifications">
+      <i data-lucide="bell"></i>
+      <span>รายการแจ้งเตือน</span>
+    </a>
+
+    <a href="../courses/courses.html" data-route="courses">
+      <i data-lucide="book-open"></i>
+      <span>วิชาเรียน</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-row">
+      <div class="user-avatar" data-sidebar-avatar>S</div>
+
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium truncate" data-sidebar-name>
+          นักศึกษา
+        </div>
+        <div class="text-xs text-muted-foreground truncate" data-sidebar-email>
+        </div>
+      </div>
+
+      <button class="btn btn-ghost btn-icon btn-sm" data-logout aria-label="ออกจากระบบ">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </div>
+</aside>
