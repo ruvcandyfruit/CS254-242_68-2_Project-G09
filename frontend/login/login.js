@@ -28,10 +28,10 @@ function validateEmail() {
   const emailValue = emailInput.value.trim();
   console.log("Email Input:", emailValue);
 
-  const emailPattern = /^.+@gmail\.com$/;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(emailValue)) {
-    emailError.textContent = "กรุณากรอกอีเมลในรูปแบบ 'example@gmail.com'";
+    emailError.textContent = "กรุณากรอกอีเมลให้ถูกต้อง เช่น example@domain.com";
     console.log("Validation Failed");
     return false;
   } else {
@@ -43,8 +43,11 @@ function validateEmail() {
 
 function validatePassword(value) {
   if (!value) return 'กรุณากรอกรหัสผ่าน';
-  if (value.length < 8) return 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
   return '';
+}
+
+function setError(element, message) {
+  element.textContent = message;
 }
 
 emailInput.addEventListener('input', validateEmail);
@@ -64,29 +67,38 @@ form.addEventListener('submit', async (e) => {
   const emailVal = emailInput.value.trim();
 
   loginBtn.disabled = true;
-  loginBtn.textContent = 'Signing in…';
+  loginBtn.textContent = 'กำลังเข้าสู่ระบบ…';
 
   try {
-    /*
-    Replace with API endpoint
-    */
+    const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: emailVal,
+        password: passwordVal,
+      }),
+    });
 
     const data = await res.json();
 
     if (res.ok) {
-      if (document.getElementById('remember').checked && data.token) {
-        localStorage.setItem('token', data.token);
-      } else if (data.token) {
-        sessionStorage.setItem('token', data.token);
+      if (document.getElementById('remember').checked && data.user_id) {
+        localStorage.setItem('user_id', data.user_id);
+      } else if (data.user_id) {
+        sessionStorage.setItem('user_id', data.user_id);
       }
       window.location.href = '../dashboard/dashboard.html';
     } else {
-      setError(passwordError, data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+      setError(passwordError, data.error || data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     }
-  } catch {
+  } catch (error) {
     setError(passwordError, 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+    console.error('Login request failed', error);
   } finally {
     loginBtn.disabled = false;
-    loginBtn.textContent = 'Sign in';
+    loginBtn.textContent = 'เข้าสู่ระบบ';
   }
 });
