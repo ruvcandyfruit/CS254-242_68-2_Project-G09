@@ -28,10 +28,10 @@ function validateEmail() {
   const emailValue = emailInput.value.trim();
   console.log("Email Input:", emailValue);
 
-  const emailPattern = /^.+@gmail\.com$/;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(emailValue)) {
-    emailError.textContent = "กรุณากรอกอีเมลในรูปแบบ 'example@gmail.com'";
+    emailError.textContent = "กรุณากรอกอีเมลให้ถูกต้อง เช่น example@domain.com";
     console.log("Validation Failed");
     return false;
   } else {
@@ -43,7 +43,6 @@ function validateEmail() {
 
 function validatePassword(value) {
   if (!value) return 'กรุณากรอกรหัสผ่าน';
-  if (value.length < 4) return 'รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร';
   return '';
 }
 
