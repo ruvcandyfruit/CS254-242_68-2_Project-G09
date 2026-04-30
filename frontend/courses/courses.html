@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วิชาเรียน — WorkFlow</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="../components/appShell/appShell.css">
+    <link rel="stylesheet" href="courses.css">
+</head>
+
+<body>
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark"><i data-lucide="graduation-cap"></i></div>
+      <div>
+        <div class="brand-title">WorkFlow</div>
+        <div class="brand-sub">จัดการ workload</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" data-route="dashboard"><i data-lucide="layout-dashboard"></i><span>ภาพรวม</span></a>
+      <a href="../allTasks/allTasks.html" data-route="tasks"><i data-lucide="list-checks"></i><span>รายการงาน</span></a>
+      <a href="../notifications/notifications.html" data-route="notifications"><i data-lucide="bell"></i><span>รายการแจ้งเตือน</span></a>
+      <a href="../courses/courses.html" data-route="courses" class="active"><i data-lucide="book-open"></i><span>วิชาเรียน</span></a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-row">
+        <div class="user-avatar" id="sidebarAvatar">S</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate" id="sidebarName">นักศึกษา</div>
+          <div class="text-xs text-muted-foreground truncate" id="sidebarEmail"></div>
+        </div>
+        <button class="btn btn-ghost btn-icon btn-sm" id="logoutBtn" aria-label="ออกจากระบบ">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Page content -->
+  <main class="app-main">
+  <div class="app-main-inner">
+    <div class="main-content">
+        <div class="courses-header">
+            <h1>รายวิชาของฉัน</h1>
+            <button class="add-course-btn">
+                <img src="../assets/icons/add.svg"> เพิ่มรายวิชา
+            </button>
+        </div>
+
+        <div class="courses-list">
+            <div class="course-card">
+                <div class="course-card-top">
+                    <div class="course-avatar">CS</div>
+                    <div class="course-card-top-right">
+                        <div class="course-menu">
+                            <button class="course-menu-btn">
+                                <img src="../assets/icons/ellipsis.svg">
+                            </button>
+                            <div class="course-dropdown">
+                                <button data-action="edit">
+                                    <img src="../assets/icons/edit.svg"> แก้ไขรายวิชา
+                                </button>
+                                <button class="danger" data-action="delete">
+                                    <img src="../assets/icons/trash.svg"> ลบรายวิชา
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-info">
+                    <div class="code-credit">
+                        <span class="course-code">CS361</span>
+                        <span class="course-credits">3 หน่วยกิต</span>
+                    </div>
+                    <h2 class="course-name">Software Engineering</h2>
+                </div>
+                <span class="course-divider"></span>
+                <div class="course-footer">
+                    <span class="course-alltasks">งานเสร็จแล้ว 30%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- การ์ดเพิ่มรายวิชา -->
+    <form class="box-overlay" id="addCourseBox">
+        <div class="box">
+            <div class="box-header">
+                <h2>เพิ่มวิชาเรียน</h2>
+                <button type="button" class="box-close" id="addCourseClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+            <div class="box-body">
+                <div class="box-row">
+                    <div class="box-field">
+                        <label>รหัสวิชา</label>
+                        <input type="text" id="input-code" placeholder="CS261" required>
+                    </div>
+                    <div class="box-field">
+                        <label>หน่วยกิต</label>
+                        <input type="number" id="input-credits" step="0.5" placeholder="3" min="1" required>
+                    </div>
+                </div>
+                <div class="box-field">
+                    <label>ชื่อวิชา</label>
+                    <input type="text" id="input-name" placeholder="Software Engineering" required>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="button" class="btn-cancel" id="addCourseCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- การ์ดแก้ไขรายวิชา -->
+    <form class="box-overlay" id="editCourseBox">
+        <div class="box">
+            <div class="box-header">
+                <h2>แก้ไขรายวิชา</h2>
+                <button type="button" class="box-close" id="editCourseClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+            <div class="box-body">
+                <div class="box-row">
+                    <div class="box-field">
+                        <label>รหัสวิชา</label>
+                        <input type="text" id="edit-code" placeholder="CS261" required>
+                    </div>
+                    <div class="box-field">
+                        <label>หน่วยกิต</label>
+                        <input type="number" id="edit-credits" step="0.5" placeholder="3" min="1" required>
+                    </div>
+                </div>
+                <div class="box-field">
+                    <label>ชื่อวิชา</label>
+                    <input type="text" id="edit-name" placeholder="Software Engineering" required>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="button" class="btn-cancel" id="editCourseCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+  </div><!-- /.app-main-inner -->
+  </main>
+</div><!-- /.app-shell -->
+
+    <!--sweet alert submit success-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="courses.js"></script>
+    <script>
+      (function () {
+        if (!sessionStorage.getItem('user_id') && !localStorage.getItem('user_id')) {
+          window.location.href = '../login/login.html';
+          return;
+        }
+        const name = sessionStorage.getItem('username') || localStorage.getItem('username') || 'นักศึกษา';
+        const email = sessionStorage.getItem('email') || localStorage.getItem('email') || '';
+        const el = document.getElementById('sidebarName');
+        const em = document.getElementById('sidebarEmail');
+        const av = document.getElementById('sidebarAvatar');
+        if (el) el.textContent = name;
+        if (em) em.textContent = email;
+        if (av) av.textContent = (name[0] || 'S').toUpperCase();
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+          sessionStorage.clear();
+          ['user_id','username','email'].forEach(k => localStorage.removeItem(k));
+          fetch('http://127.0.0.1:5000/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+          window.location.href = '../login/login.html';
+        });
+        lucide.createIcons();
+      })();
+    </script>
+</body>
+
+</html>
