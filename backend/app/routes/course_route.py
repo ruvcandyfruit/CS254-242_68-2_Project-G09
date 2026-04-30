@@ -22,7 +22,7 @@ def get_course(course_id):
 
     course, error = course_service.get_course_by_id(course_id, user_id)
     if error:
-        return jsonify({"error": error}), 404
+        return jsonify({"error": error}), error
     return jsonify(course), 200
 
 
@@ -59,7 +59,7 @@ def update(course_id):
 
     course, error = course_service.update_course(course_id, data, user_id)
     if error:
-        return jsonify({"error": error}), 400
+        return jsonify({"error": error}), error
     return jsonify({"message": "Course updated"}), 200
 
 
@@ -71,5 +71,5 @@ def delete(course_id):
 
     error = course_service.delete_course(course_id, user_id)
     if error:
-        return jsonify({"error": error}), 404
+        return jsonify({"error": error}), error
     return jsonify({"message": "Course deleted"}), 200
