@@ -1,154 +1,94 @@
-from flask import Blueprint, request, jsonify, session
-from app.services.task_service import (
-    create_task,
-    get_all_tasks_by_user,
-    get_prioritized_tasks,
-    get_task_by_id,
-    update_task,
-    toggle_task_status,
-    delete_task
-)
+from app.models import db
+from datetime import datetime
 
-task_bp = Blueprint("task", __name__)
+class Task(db.Model):
+    __tablename__ = 'tasks'
 
+    id = db.Column(db.Integer, primary_key=True)
+    _title = db.Column("title", db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    _deadline = db.Column("deadline", db.DateTime, nullable=False)
+    _duration = db.Column("duration", db.Integer)
+    _emergency = db.Column("emergency", db.Boolean, default=False)
+    _score_weight = db.Column("score_weight", db.Integer, nullable=False)
+    _status = db.Column("status", db.String, default="pending")
 
-# สร้าง task ใหม่
-@task_bp.route("", methods=["POST"])
-def create():
-    user_id = session.get("user_id") # เช็คว่า login อยู่ไหม
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+    # constructor
+    def __init__(self, title, deadline, score_weight, course_id,
+                 description=None, duration=None, emergency=False):
+        self.set_title(title)
+        self.set_deadline(deadline)
+        self.set_score_weight(score_weight)
+        self.set_duration(duration)
+        self._emergency = emergency
+        self._status = "pending"
 
-    data = request.get_json()
+        self.description = description
+        self.course_id = course_id
 
-    # สร้าง task ส่งข้อมูลไปให้ service 
-    task = create_task(
-        title=data.get("title"),
-        description=data.get("description"),
-        deadline=data.get("deadline"),
-        duration=data.get("duration"),
-        emergency=data.get("emergency"),
-        score_weight=data.get("score_weight"),
-        course_id=data.get("course_id")
-    )
+    # getter / setter
+    def get_title(self):
+        return self._title
 
-    return jsonify({"message": "Task created", "id": task.id})
+    def set_title(self, title):
+        if not title or len(title.strip()) == 0:
+            raise ValueError("Title cannot be empty")
+        self._title = title
 
+    def get_deadline(self):
+        return self._deadline
 
-# ดึง task ทั้งหมดของ
-@task_bp.route("", methods=["GET"])
-def get_all():
-    user_id = session.get("user_id")
+    def set_deadline(self, deadline):
+        # ถ้าเป็น string
+        if isinstance(deadline, str):
+            deadline = datetime.fromisoformat(deadline)
 
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+        if deadline < datetime.utcnow():
+            raise ValueError("Deadline cannot be in the past")
 
-    tasks = get_all_tasks_by_user(user_id) # ดึง task ทั้งหมดของ user จาก service
+        self._deadline = deadline
 
-    return jsonify([
-        {
-            "id": t.id,
-            "title": t.get_title(),
-            "description": t.description,
-            "deadline": t.get_deadline().isoformat(),
-            "duration": t.get_duration(),
-            "emergency": t.is_emergency(),
-            "score_weight": t.get_score_weight(),
-            "status": t.get_status()
-        } for t in tasks
-    ])
+    def get_duration(self):
+        return self._duration
 
+    def set_duration(self, duration):
+        if duration is not None and duration < 0:
+            raise ValueError("Duration must be positive")
+        self._duration = duration
 
-# ดึง task หลังจัดความสำคัญ
-@task_bp.route("/prioritized", methods=["GET"])
-def get_prioritized():
-    user_id = session.get("user_id")
+    def get_score_weight(self):
+        return self._score_weight
 
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+    def set_score_weight(self, weight):
+        if not (1 <= weight <= 100):
+            raise ValueError("Score weight must be between 1 and 100")
+        self._score_weight = weight
 
-    data = get_prioritized_tasks(user_id) # ดึง task ที่จัดลำดับแล้วจาก service
+    def get_status(self):
+        return self._status
 
-    return jsonify(data)
+    # state control 
+    def toggle_status(self):
+        if self._status == "pending":
+            self._status = "done"
+        elif self._status == "done":
+            self._status = "pending"
+        else:
+            raise ValueError("Invalid status")
 
-
-# ดึงรายละเอียด task ตาม id
-@task_bp.route("/<int:task_id>", methods=["GET"])
-def get_one(task_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    t = get_task_by_id(task_id)
-
-    if not t:
-        return jsonify({"error": "Task not found"}), 404
-
-    return jsonify({
-        "id": t.id,
-        "title": t.get_title(),
-        "description": t.description,
-        "deadline": t.get_deadline().isoformat(),
-        "duration": t.get_duration(),
-        "emergency": t.is_emergency(),
-        "score_weight": t.get_score_weight(),
-        "status": t.get_status()
-    })
-
-
-# เอาไว้แก้task 
-@task_bp.route("/<int:task_id>", methods=["PUT"])
-def update(task_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    data = request.get_json()
-
-    task = get_task_by_id(task_id) # ค้นหา task ที่ต้องการแก้ไข
-
-    if not task:
-        return jsonify({"error": "Task not found"}), 404
-
-    update_task(task, **data)  # ส่ง task และข้อมูลใหม่ไปให้ service อัปเดต
-
-    return jsonify({"message": "Task updated"})
-
-
-# เปลี่ยนสถานะ task 
-@task_bp.route("/<int:task_id>/status", methods=["PATCH"])
-def update_status(task_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    task = toggle_task_status(task_id, user_id)  # ส่ง task_id และ user_id ไปให้ service เปลี่ยนสถานะ
-
-    if not task:
-        return jsonify({"error": "Task not found or forbidden"}), 404
-
-    return jsonify({
-        "message": "Status toggled",
-        "status": task.get_status()
-    })
-
-
-# ลบ task ตาม id
-@task_bp.route("/<int:task_id>", methods=["DELETE"])
-def delete(task_id):
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    # ส่ง task_id และ user_id ไปให้ service ลบ 
-    task = delete_task(task_id, user_id)
-
-    if not task:
-        return jsonify({"error": "Task not found or forbidden"}), 404
     
-    return jsonify({"message": "Task deleted"})
+    # behavior
+    def is_completed(self):
+        return self._status == "done"
+    
+    def is_overdue(self):
+        return self._deadline < datetime.utcnow()
+
+    def get_days_remaining(self):
+        delta = self._deadline - datetime.utcnow()
+        return max(delta.days, 0)
+
+    def is_emergency(self):
+        return self._emergency

@@ -4,7 +4,6 @@ from app.models.course_model import Course
 from datetime import datetime
 from app.core.priority_engine import PriorityEngine
 
-
 class TaskService:
     def __init__(self, task_model=Task, course_model=Course, database=db,
                  priority_engine_class=PriorityEngine):
@@ -115,10 +114,6 @@ class TaskService:
             self._course_model.user_id == user_id
         ).all()
 
-    def get_all_tasks_response_by_user(self, user_id): # ดึง task object แล้วแปลงเป็น dict สำหรับ response
-        tasks = self.get_all_tasks_by_user(user_id)
-        return [self._task_to_response(task) for task in tasks]
-
     def get_prioritized_tasks(self, user_id):
         tasks = self.get_all_tasks_by_user(user_id)
 
@@ -189,12 +184,10 @@ class TaskService:
 
         return task
 
-
 _task_service = TaskService()
 
 
 # API functions
-
 def create_task(title, deadline, score_weight, course_id,
                 description=None, duration=None, emergency=False):
     return _task_service.create_task(
@@ -207,30 +200,23 @@ def create_task(title, deadline, score_weight, course_id,
         emergency=emergency
     )
 
-
 def get_all_tasks_by_user(user_id):
     return _task_service.get_all_tasks_by_user(user_id)
-
 
 def get_all_tasks_response_by_user(user_id):
     return _task_service.get_all_tasks_response_by_user(user_id)
 
-
 def get_prioritized_tasks(user_id):
     return _task_service.get_prioritized_tasks(user_id)
-
 
 def get_task_by_id(task_id):
     return _task_service.get_task_by_id(task_id)
 
-
 def update_task(task, **kwargs):
     return _task_service.update_task(task, **kwargs)
 
-
 def toggle_task_status(task_id, user_id):
     return _task_service.toggle_task_status(task_id, user_id)
-
 
 def delete_task(task_id, user_id):
     return _task_service.delete_task(task_id, user_id)
