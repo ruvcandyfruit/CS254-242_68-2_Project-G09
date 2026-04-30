@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการงาน — WorkFlow</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="../components/appShell/appShell.css">
+    <link rel="stylesheet" href="allTasks.css">
+</head>
+
+<body>
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark"><i data-lucide="graduation-cap"></i></div>
+      <div>
+        <div class="brand-title">WorkFlow</div>
+        <div class="brand-sub">จัดการ workload</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../dashboard/dashboard.html" data-route="dashboard"><i data-lucide="layout-dashboard"></i><span>ภาพรวม</span></a>
+      <a href="../allTasks/allTasks.html" data-route="tasks" class="active"><i data-lucide="list-checks"></i><span>รายการงาน</span></a>
+      <a href="../notifications/notifications.html" data-route="notifications"><i data-lucide="bell"></i><span>รายการแจ้งเตือน</span></a>
+      <a href="../courses/courses.html" data-route="courses"><i data-lucide="book-open"></i><span>วิชาเรียน</span></a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-row">
+        <div class="user-avatar" id="sidebarAvatar">S</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate" id="sidebarName">นักศึกษา</div>
+          <div class="text-xs text-muted-foreground truncate" id="sidebarEmail"></div>
+        </div>
+        <button class="btn btn-ghost btn-icon btn-sm" id="logoutBtn" aria-label="ออกจากระบบ">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Page content -->
+  <main class="app-main">
+  <div class="app-main-inner">
+    <div class="main-content">
+
+        <div class="header">
+            <div class="header-left">
+                <h1>รายการงาน</h1>
+            </div>
+            <button class="btn-add" id="btnAddTask">
+                <img src="../assets/icons/add.svg">เพิ่มงาน
+            </button>
+        </div>
+
+        <!-- ช่องค้นหาและตัวกรอง -->
+        <div class="toolbar">
+            <div class="search-wrapper">
+                <img src="../assets/icons/search.svg">
+                <input type="text" class="search-input" id="searchInput" placeholder="ค้นหา">
+            </div>
+            <div class="filter-tabs">
+                <button class="tab active" data-filter="all">ทั้งหมด</button>
+                <button class="tab" data-filter="inprogress">กำลังทำ</button>
+                <button class="tab" data-filter="overdue">เลยกำหนด</button>
+                <button class="tab" data-filter="done">เสร็จแล้ว</button>
+            </div>
+            <div class="course-filter-wrapper">
+                <button class="btn-course-filter" id="btnCourseFilter">
+                    <span id="courseFilterLabel">วิชา</span>
+                    <img src="../assets/icons/dropdown.svg">
+                </button>
+                <div class="course-dropdown" id="courseDropdown"></div>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="task-list" id="taskList"></div>
+    </div>
+
+    <!-- การ์ดเพิ่มงาน -->
+    <form class="card-overlay" id="addtask-card">
+        <div class="card">
+            <div class="card-header">
+                <h2>เพิ่มงานใหม่</h2>
+                <button type="button" class="card-close" id="modalClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-field">
+                    <label>ชื่องาน</label>
+                    <input type="text" id="inputName" placeholder="Lab 5" required>
+                </div>
+
+                <div class="card-field">
+                    <label>คำอธิบายงาน</label>
+                    <textarea id="inputDescription" placeholder="อธิบายงานสั้น ๆ" rows="3"></textarea>
+                </div>
+
+                <div class="card-field">
+                    <label>วิชา</label>
+                    <select id="inputCourse">
+                        <!--<img src="../assets/icons/dropdown.svg">-->
+                    </select>
+
+                </div>
+
+                <div class="card-row">
+                    <div class="card-field">
+                        <label>เวลาประมาณ (ชม.)</label>
+                        <input type="number" id="inputHours" placeholder="2">
+                    </div>
+                    <div class="card-field">
+                        <label>น้ำหนักคะแนน (%)</label>
+                        <input type="number" id="inputScore" placeholder="3" min="0" max="100" required>
+                    </div>
+                </div>
+
+                <div class="card-field">
+                    <label>กำหนดส่ง</label>
+                    <input type="date" id="inputDue" required>
+                </div>
+
+                <div class="card-field">
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-title">งานเร่งด่วน</div>
+                            <div class="toggle-desc">ระบบจะดันความสำคัญขึ้น</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="inputUrgent">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn-cancel" id="btnCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save" id="btnSave">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- การ์ดแก้ไขงาน -->
+    <form class="card-overlay" id="edit-task-card">
+        <div class="card">
+            <div class="card-header">
+                <h2>แก้ไขงาน</h2>
+                <button type="button" class="card-close" id="editModalClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-field">
+                    <label>ชื่องาน</label>
+                    <input type="text" id="edit-name" placeholder="Lab 5" required>
+                </div>
+
+                <div class="card-field">
+                    <label>คำอธิบายงาน</label>
+                    <textarea id="edit-description" placeholder="อธิบายงานสั้น ๆ" rows="3"></textarea>
+                </div>
+
+                <div class="card-field">
+                    <label>วิชา</label>
+                    <select id="edit-course"></select>
+                </div>
+
+                <div class="card-row">
+                    <div class="card-field">
+                        <label>เวลาประมาณ (ชม.)</label>
+                        <input type="number" id="edit-hours" placeholder="2">
+                    </div>
+                    <div class="card-field">
+                        <label>น้ำหนักคะแนน (%)</label>
+                        <input type="number" id="edit-score" placeholder="3" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="card-field">
+                    <label>กำหนดส่ง</label>
+                    <input type="date" id="edit-due">
+                </div>
+
+                <div class="card-field">
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-title">งานเร่งด่วน</div>
+                            <div class="toggle-desc">ระบบจะดันความสำคัญขึ้น</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="edit-urgent">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn-cancel" id="editBtnCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+  </div><!-- /.app-main-inner -->
+  </main>
+</div><!-- /.app-shell -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="allTasks.js"></script>
+    <script>
+      (function () {
+        if (!sessionStorage.getItem('user_id') && !localStorage.getItem('user_id')) {
+          window.location.href = '../login/login.html';
+          return;
+        }
+        const name = sessionStorage.getItem('username') || localStorage.getItem('username') || 'นักศึกษา';
+        const email = sessionStorage.getItem('email') || localStorage.getItem('email') || '';
+        const el = document.getElementById('sidebarName');
+        const em = document.getElementById('sidebarEmail');
+        const av = document.getElementById('sidebarAvatar');
+        if (el) el.textContent = name;
+        if (em) em.textContent = email;
+        if (av) av.textContent = (name[0] || 'S').toUpperCase();
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+          sessionStorage.clear();
+          ['user_id','username','email'].forEach(k => localStorage.removeItem(k));
+          fetch('http://127.0.0.1:5000/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+          window.location.href = '../login/login.html';
+        });
+        lucide.createIcons();
+      })();
+    </script>
+</body>
+
+</html>

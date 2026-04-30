@@ -1,0 +1,49 @@
+<div data-dialog="addTask" hidden>
+  <div class="dialog-title">เพิ่มงานใหม่</div>
+  <form data-add-task-form style="display:flex;flex-direction:column;gap:1rem;">
+    <div style="display:flex;flex-direction:column;gap:.375rem;">
+      <label class="label" for="atd-title">ชื่องาน</label>
+      <input id="atd-title" name="title" class="input" placeholder="เช่น ส่ง Lab 5" />
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.375rem;">
+      <label class="label">วิชา</label>
+      <div class="select" data-select data-placeholder="เลือกวิชา" data-name="courseId">
+        <button type="button" class="select-trigger">
+          <span class="select-value">เลือกวิชา</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="select-options" hidden data-course-options></div>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-3">
+      <div style="display:flex;flex-direction:column;gap:.375rem;">
+        <label class="label" for="atd-duration">เวลาประมาณ (ชม.)</label>
+        <input id="atd-duration" name="duration" type="number" min="0.5" step="0.5" value="2" class="input" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.375rem;">
+        <label class="label" for="atd-score">น้ำหนักคะแนน (%)</label>
+        <input id="atd-score" name="scoreWeight" type="number" min="0" max="100" value="5" class="input" />
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.375rem;">
+      <label class="label" for="atd-deadline">กำหนดส่ง</label>
+      <input id="atd-deadline" name="deadline" type="date" class="input" />
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid hsl(var(--border));border-radius:.5rem;padding:.75rem 1rem;">
+      <div>
+        <div class="text-sm font-medium">งานเร่งด่วน</div>
+        <div class="text-xs text-muted-foreground">ระบบจะดันความสำคัญขึ้น</div>
+      </div>
+      <button type="button" class="switch" data-switch data-state="unchecked" data-name="emergency"><span class="switch-thumb"></span></button>
+    </div>
+
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-ghost" data-dialog-close>ยกเลิก</button>
+      <button type="submit" class="btn btn-primary">บันทึก</button>
+    </div>
+  </form>
+</div>
