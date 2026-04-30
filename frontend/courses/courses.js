@@ -1,4 +1,16 @@
-//เปิด/ปิด dropdown
+const courseList = document.querySelector('.courses-list');
+const addCourseForm = document.getElementById('addCourseBox');
+const editCourseForm = document.getElementById('editCourseBox');
+const addCourseBtn = document.querySelector('.add-course-btn');
+const addCourseClose = document.getElementById('addCourseClose');
+const addCourseCancel = document.getElementById('addCourseCancel');
+const editCourseClose = document.getElementById('editCourseClose');
+const editCourseCancel = document.getElementById('editCourseCancel');
+
+let editingCourseId = null;
+let editingCard = null;
+
+// เปิด/ปิด dropdown ของแต่ละ card
 function toggleMenu(btn) {
     const dropdown = btn.nextElementSibling;
     const isOpen = dropdown.classList.contains('open');
@@ -15,14 +27,13 @@ document.addEventListener('click', function (e) {
     }
 });
 
-document.querySelector('.add-course-btn').addEventListener('click', addCourse);
-document.getElementById('addCourseClose').addEventListener('click', closeBox);
-document.getElementById('addCourseCancel').addEventListener('click', closeBox);
-document.getElementById('editCourseClose').addEventListener('click', closeEditBox);
-document.getElementById('editCourseCancel').addEventListener('click', closeEditBox);
+addCourseBtn.addEventListener('click', openAddBox);
+addCourseClose.addEventListener('click', closeAddBox);
+addCourseCancel.addEventListener('click', closeAddBox);
+editCourseClose.addEventListener('click', closeEditBox);
+editCourseCancel.addEventListener('click', closeEditBox);
 
-// Event delegation สำหรับปุ่มในการ์ด
-document.querySelector('.courses-list').addEventListener('click', function (e) {
+courseList.addEventListener('click', function (e) {
     const menuBtn = e.target.closest('.course-menu-btn');
     const editBtn = e.target.closest('[data-action="edit"]');
     const deleteBtn = e.target.closest('[data-action="delete"]');
@@ -32,30 +43,47 @@ document.querySelector('.courses-list').addEventListener('click', function (e) {
     if (deleteBtn) deleteCourse(deleteBtn);
 });
 
-function addCourse() {
-    document.getElementById('addCourseBox').classList.add('open');
-}
-
-function closeBox() {
-    document.getElementById('addCourseBox').classList.remove('open');
-    document.getElementById('addCourseBox').reset();
-}
-
-document.getElementById('addCourseBox').addEventListener('submit', function (e) {
+// submit form เพิ่มวิชา
+addCourseForm.addEventListener('submit', function (e) {
     e.preventDefault();
     saveNewCourse();
 });
 
-//สร้างการ์ดวิชาใหม่
-function saveNewCourse() {
-    const code = document.getElementById('input-code').value.trim();
-    const credits = document.getElementById('input-credits').value.trim();
-    const name = document.getElementById('input-name').value.trim();
+// submit form แก้ไขวิชา
+editCourseForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    saveEditCourse();
+});
 
-    const prefix = code.replace(/[0-9]/g, '').toUpperCase();
+function openAddBox() {
+    addCourseForm.classList.add('open');
+}
 
+function closeAddBox() {
+    addCourseForm.classList.remove('open');
+    addCourseForm.reset();
+}
+
+function closeEditBox() {
+    editCourseForm.classList.remove('open');
+    editCourseForm.reset();
+    editingCourseId = null;
+    editingCard = null;
+}
+
+function createCourseCard(course) {
+    const prefix = (course.course_code || course.name || '')
+        .replace(/[0-9]/g, '')
+        .toUpperCase()
+        .slice(0, 2);
+
+    const allTasks = Array.isArray(course.tasks) ? course.tasks.length : 0;
+    const pendingTasks = Array.isArray(course.tasks) ? course.tasks.filter(t => t.status === 'pending').length : 0;
+
+    //สร้าง card ของแต่ละวิชา
     const card = document.createElement('div');
     card.className = 'course-card';
+    card.dataset.id = course.id;
     card.innerHTML = `
         <div class="course-card-top">
             <div class="course-avatar">${prefix}</div>
@@ -77,78 +105,153 @@ function saveNewCourse() {
         </div>
         <div class="course-info">
             <div class="code-credit">
-                <span class="course-code">${code}</span>
-                <span class="course-credits">${credits} หน่วยกิต</span>
+                <span class="course-code">${course.course_code || ''}</span>
+                <span class="course-credits">${course.course_weight} หน่วยกิต</span>
             </div>
-            <h2 class="course-name">${name}</h2>
+            <h2 class="course-name">${course.name}</h2>
         </div>
         <span class="course-divider"></span>
         <div class="course-footer">
-            <span class="course-alltasks">ทั้งหมด 0 งาน</span>
-            <span class="course-tasks">งานค้าง 0 งาน</span>
+            <span class="course-alltasks">ทั้งหมด ${allTasks} งาน</span>
+            <span class="course-tasks">งานค้าง ${pendingTasks} งาน</span>
         </div>
     `;
-
-    document.querySelector('.courses-list').appendChild(card);
-    closeBox();
+    return card;
 }
 
-// แก้ไขรายวิชา
-let editingCard = null;
+/*Api*/
+const API_BASE = 'http://127.0.0.1:5000';
+async function loadCourses() {
+    courseList.innerHTML = '';
+    try {
+        const res = await fetch(`${API_BASE}/api/course`, {
+            credentials: 'include',
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            console.error('Load courses failed', data);
+            courseList.innerHTML = '<p class="empty-message">ไม่สามารถโหลดรายวิชาได้ในขณะนี้</p>';
+            return;
+        }
+
+        const courses = Array.isArray(data) ? data : data.courses || [];
+        if (!courses.length) {
+            courseList.innerHTML = '<p class="empty-message">ยังไม่มีรายวิชา</p>';
+            return;
+        }
+
+        courses.forEach(course => {
+            courseList.appendChild(createCourseCard(course));
+        });
+    } catch (error) {
+        console.error('Fetch error', error);
+        courseList.innerHTML = '<p class="empty-message">เกิดข้อผิดพลาดในการเชื่อมต่อ</p>';
+    }
+}
+
+/*Api สร้างรายวิชาใหม่*/
+async function saveNewCourse() {
+    const code = document.getElementById('input-code').value.trim();
+    const credits = document.getElementById('input-credits').value.trim();
+    const name = document.getElementById('input-name').value.trim();
+
+    const payload = {
+        course_code: code,
+        course_weight: Number(credits),
+        name,
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/api/course`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            return;
+        }
+
+        closeAddBox();
+        await loadCourses();
+        Swal.fire('สำเร็จ', 'สร้างรายวิชาเรียบร้อยแล้ว', 'success');
+    } catch (error) {
+        console.error('Save course failed', error);
+    }
+}
 
 function editCourse(btn) {
     btn.closest('.course-dropdown').classList.remove('open');
 
     editingCard = btn.closest('.course-card');
-    const code = editingCard.querySelector('.course-code').textContent;
-    const name = editingCard.querySelector('.course-name').textContent;
-    const credits = editingCard.querySelector('.course-credits').textContent.replace(' หน่วยกิต', '');
+    editingCourseId = editingCard.dataset.id;
 
-    document.getElementById('edit-code').value = code;
-    document.getElementById('edit-credits').value = credits;
-    document.getElementById('edit-name').value = name;
+    // ดึงข้อมูลเดิมใส่ form
+    document.getElementById('edit-code').value =
+        editingCard.querySelector('.course-code').textContent;
 
-    document.getElementById('editCourseBox').classList.add('open');
+    document.getElementById('edit-name').value =
+        editingCard.querySelector('.course-name').textContent;
+
+    document.getElementById('edit-credits').value =
+        editingCard.querySelector('.course-credits').textContent.replace(' หน่วยกิต', '');
+
+    editCourseForm.classList.add('open');
 }
 
-function closeEditBox() {
-    document.getElementById('editCourseBox').classList.remove('open');
-    document.getElementById('editCourseBox').reset();
-    editingCard = null;
-}
+async function saveEditCourse() {
+    if (!editingCourseId || !editingCard) return;
 
-document.getElementById('editCourseBox').addEventListener('submit', function (e) {
-    e.preventDefault();
-    saveEditCourse();
-});
-
-//อัปเดทข้อมูลที่แก้ไข
-function saveEditCourse() {
     const code = document.getElementById('edit-code').value.trim();
     const credits = document.getElementById('edit-credits').value.trim();
     const name = document.getElementById('edit-name').value.trim();
 
-    if (!editingCard) return;
 
-    const prefix = code.replace(/[0-9]/g, '').toUpperCase();
+    const payload = {
+        course_code: code,
+        course_weight: Number(credits),
+        name,
+    };
 
-    editingCard.querySelector('.course-avatar').textContent = prefix;
-    editingCard.querySelector('.course-code').textContent = code;
-    editingCard.querySelector('.course-name').textContent = name;
-    editingCard.querySelector('.course-credits').textContent = `${credits} หน่วยกิต`;
+    try {
+        const res = await fetch(`${API_BASE}/api/course/${editingCourseId}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
 
-    closeEditBox();
+        if (!res.ok) {
+            return;
+        }
+
+        editingCard.querySelector('.course-code').textContent = code;
+        editingCard.querySelector('.course-name').textContent = name;
+        editingCard.querySelector('.course-credits').textContent = `${credits} หน่วยกิต`;
+        editingCard.querySelector('.course-avatar').textContent = code.replace(/[0-9]/g, '').toUpperCase().slice(0, 2);
+
+        closeEditBox();
+        Swal.fire('สำเร็จ', 'แก้ไขรายวิชาเรียบร้อยแล้ว', 'success');
+    } catch (error) {
+        console.error('Edit course failed', error);
+    }
 }
 
-
-// ลบการ์ดรายวิชา
-function deleteCourse(btn) {
+async function deleteCourse(btn) {
     btn.closest('.course-dropdown').classList.remove('open');
     const card = btn.closest('.course-card');
+    const course_Id = card.dataset.id;
     const courseName = card.querySelector('.course-name').textContent;
 
-    //alert box
-    Swal.fire({
+    const result = await Swal.fire({
         icon: 'warning',
         title: 'ยืนยันการลบรายวิชา',
         text: `คุณต้องการลบวิชา ${courseName} ใช่หรือไม่?`,
@@ -157,16 +260,36 @@ function deleteCourse(btn) {
         cancelButtonText: 'ยกเลิก',
         confirmButtonColor: '#dc2626',
         cancelButtonColor: '#6c757d',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            card.remove();
-            Swal.fire({
-                icon: 'success',
-                title: 'ลบรายวิชาเรียบร้อย',
-                text: `วิชา${courseName} ถูกลบออกแล้ว`,
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
     });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/course/${course_Id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            return;
+        }
+
+        card.remove();
+        Swal.fire({
+            icon: 'success',
+            title: 'ลบรายวิชาเรียบร้อย',
+            text: `วิชา ${courseName} ถูกลบออกแล้ว`,
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        if (!courseList.querySelector('.course-card')) {
+            courseList.innerHTML = '<p class="empty-message">ยังไม่มีรายวิชา</p>';
+        }
+    } catch (error) {
+        console.error('Delete course failed', error);
+    }
 }
+
+loadCourses();
