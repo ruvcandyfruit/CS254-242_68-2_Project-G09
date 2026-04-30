@@ -77,8 +77,7 @@ function createCourseCard(course) {
         .toUpperCase()
         .slice(0, 2);
 
-    const allTasks = Array.isArray(course.tasks) ? course.tasks.length : 0;
-    const pendingTasks = Array.isArray(course.tasks) ? course.tasks.filter(t => t.status === 'pending').length : 0;
+    const progress = course.progress ?? 0;
 
     //สร้าง card ของแต่ละวิชา
     const card = document.createElement('div');
@@ -112,8 +111,8 @@ function createCourseCard(course) {
         </div>
         <span class="course-divider"></span>
         <div class="course-footer">
-            <span class="course-alltasks">ทั้งหมด ${allTasks} งาน</span>
-            <span class="course-tasks">งานค้าง ${pendingTasks} งาน</span>
+            <span class="course-alltasks">งานเสร็จแล้ว ${progress}</span>
+            <span class="course-pending">งานค้าง ${course.pending_task_count ?? 0} งาน</span>
         </div>
     `;
     return card;

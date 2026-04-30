@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายการงาน</title>
+    <title>All tasks</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="allTasks.css">
 </head>
 
 <body>
     <div class="main-content">
-        <!-- Header -->
+
         <div class="header">
             <div class="header-left">
                 <h1>รายการงาน</h1>
@@ -21,7 +21,7 @@
             </button>
         </div>
 
-        <!-- Search & Filter -->
+        <!-- ช่องค้นหาและตัวกรอง -->
         <div class="toolbar">
             <div class="search-wrapper">
                 <img src="../assets/icons/search.svg">
@@ -30,7 +30,7 @@
             <div class="filter-tabs">
                 <button class="tab active" data-filter="all">ทั้งหมด</button>
                 <button class="tab" data-filter="inprogress">กำลังทำ</button>
-                <button class="tab" data-filter="urgent">ด่วน</button>
+                <button class="tab" data-filter="overdue">เลยกำหนด</button>
                 <button class="tab" data-filter="done">เสร็จแล้ว</button>
             </div>
             <div class="course-filter-wrapper">
@@ -46,7 +46,7 @@
         <div class="task-list" id="taskList"></div>
     </div>
 
-    <!-- Add Task Card -->
+    <!-- การ์ดเพิ่มงาน -->
     <form class="card-overlay" id="addtask-card">
         <div class="card">
             <div class="card-header">
@@ -60,6 +60,11 @@
                 <div class="card-field">
                     <label>ชื่องาน</label>
                     <input type="text" id="inputName" placeholder="Lab 5" required>
+                </div>
+
+                <div class="card-field">
+                    <label>คำอธิบายงาน</label>
+                    <textarea id="inputDescription" placeholder="อธิบายงานสั้น ๆ" rows="3"></textarea>
                 </div>
 
                 <div class="card-field">
@@ -106,6 +111,71 @@
             </div>
         </div>
     </form>
+
+    <!-- การ์ดแก้ไขงาน -->
+    <form class="card-overlay" id="edit-task-card">
+        <div class="card">
+            <div class="card-header">
+                <h2>แก้ไขงาน</h2>
+                <button type="button" class="card-close" id="editModalClose">
+                    <img src="../assets/icons/close.svg">
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div class="card-field">
+                    <label>ชื่องาน</label>
+                    <input type="text" id="edit-name" placeholder="Lab 5" required>
+                </div>
+
+                <div class="card-field">
+                    <label>คำอธิบายงาน</label>
+                    <textarea id="edit-description" placeholder="อธิบายงานสั้น ๆ" rows="3"></textarea>
+                </div>
+
+                <div class="card-field">
+                    <label>วิชา</label>
+                    <select id="edit-course"></select>
+                </div>
+
+                <div class="card-row">
+                    <div class="card-field">
+                        <label>เวลาประมาณ (ชม.)</label>
+                        <input type="number" id="edit-hours" placeholder="2">
+                    </div>
+                    <div class="card-field">
+                        <label>น้ำหนักคะแนน (%)</label>
+                        <input type="number" id="edit-score" placeholder="3" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="card-field">
+                    <label>กำหนดส่ง</label>
+                    <input type="date" id="edit-due">
+                </div>
+
+                <div class="card-field">
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-title">งานเร่งด่วน</div>
+                            <div class="toggle-desc">ระบบจะดันความสำคัญขึ้น</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="edit-urgent">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn-cancel" id="editBtnCancel">ยกเลิก</button>
+                <button type="submit" class="btn-save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="allTasks.js"></script>
 </body>
