@@ -33,7 +33,6 @@ body {
     opacity: 0.8;
 }
 
-/* Workflow */
 .main-content {
     display: flex;
     flex-direction: column;
@@ -58,13 +57,6 @@ body {
     max-width: 400px;
 }
 
-.card h1 {
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text-black);
-    text-align: center;
-    margin-bottom: 10px;
-}
 
 /* Fields email password text */
 .field label {
