@@ -41,7 +41,7 @@ class Task(db.Model):
         return self._deadline
 
     def set_deadline(self, deadline):
-        # ถ้าเป็น string 
+        # ถ้าเป็น string
         if isinstance(deadline, str):
             deadline = datetime.fromisoformat(deadline)
 
@@ -69,7 +69,7 @@ class Task(db.Model):
     def get_status(self):
         return self._status
 
-    # state control
+    # state control 
     def toggle_status(self):
         if self._status == "pending":
             self._status = "done"
@@ -78,16 +78,7 @@ class Task(db.Model):
         else:
             raise ValueError("Invalid status")
 
-    def mark_done(self):
-        if self._status == "done":
-            raise ValueError("Task already done")
-        self._status = "done"
-
-    def mark_pending(self):
-        if self._status == "pending":
-            raise ValueError("Task already pending")
-        self._status = "pending"
-
+    
     # behavior
     def is_completed(self):
         return self._status == "done"
@@ -101,23 +92,3 @@ class Task(db.Model):
 
     def is_emergency(self):
         return self._emergency
-
-    # business logic 
-    def estimate_urgency_level(self):
-        days = self.get_days_remaining()
-
-        if self.is_overdue():
-            return "OVERDUE"
-        elif days == 0:
-            return "HIGH"
-        elif days <= 3:
-            return "MEDIUM"
-        else:
-            return "LOW"
-
-    def can_be_completed(self):
-        if self.is_overdue():
-            return False
-        if self._status == "done":
-            return False
-        return True
