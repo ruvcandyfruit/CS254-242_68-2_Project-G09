@@ -63,9 +63,10 @@ class Course(db.Model):
     def calculate_progress(self):
         total = len(self.tasks)
         if total == 0:
-            return 0.0
+            return "0%"
         completed = len(self.get_completed_tasks())
-        return completed / total
+        percentage = int((completed / total) * 100)
+        return f"{percentage}%"
 
     def to_dict(self):
         return {
