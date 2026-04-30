@@ -3,21 +3,31 @@ from app.models.course_model import Course
 from datetime import datetime, timezone, timedelta
 
 class NotificationService:
-    def __init__(self, user_id):
+    # Constructor
+    def __init__(self, user_id, threshold_hours=24):
         self._user_id = user_id
-        self._threshold_days = 3
+        self._threshold_days = threshold_hours
 
+    # getter/setter
     def get_user_id(self):
         return self._user_id
 
     def get_threshold_days(self):
         return self._threshold_days
+    
+    def set_user_id(self, user_id):
+        if not isinstance(user_id, int):
+            raise ValueError("user_id must be an integer")
+        if user_id <= 0:
+            raise ValueError("user_id must be positive")
+        self._user_id = user_id
 
-    def set_threshold_days(self, days):
-        if days < 0:
-            raise ValueError("Threshold days must be non-negative")
-        self._threshold_days = days
+    def set_threshold_hours(self, hours):
+        if hours < 0:
+            raise ValueError("Threshold hours must be non-negative")
+        self._threshold_hours = hours
 
+    # serialize for response
     def serialize(self, task):
         return {
             "id": task.id,
@@ -32,8 +42,9 @@ class NotificationService:
 
     def get_notifications(self):
         now = datetime.now(timezone.utc)
-        threshold = now + timedelta(hours=24)
+        threshold = now + timedelta(hours=self.get_threshold_days())
 
+        # query not done + overdue tasks
         overdue_tasks = (
             Task.query
             .join(Course, Task.course_id == Course.id)
@@ -46,6 +57,7 @@ class NotificationService:
             .all()
         )
 
+        # query not done + day remaining < 24 hr tasks
         due_soon_tasks = (
             Task.query
             .join(Course, Task.course_id == Course.id)
@@ -65,24 +77,9 @@ class NotificationService:
         overdue_count = len(overdue_list)
         due_soon_count = len(due_soon_list)
 
-        messages = []
-
-        if overdue_count > 0:
-            messages.append(f"{overdue_count} overdue task(s)")
-
-        if due_soon_count > 0:
-            messages.append(f"{due_soon_count} task(s) due within 24 hours")
-
-        if not messages:
-            message = "No upcoming or overdue tasks"
-        else:
-            message = "You have " + " and ".join(messages)
-
         return {
             "overdue_count": overdue_count,
             "due_soon_count": due_soon_count,
-            "message": message,
             "overdue_tasks": overdue_list,
-            "due_soon_tasks": due_soon_list,
-            "type": "TASK_ALERT"
+            "due_soon_tasks": due_soon_list
         }
