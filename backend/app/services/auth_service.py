@@ -5,7 +5,21 @@ from app.models.user_model import User
 
 
 class AuthService:
+    # constructor
+    def __init__(self):
+        self._service_name = "AuthService"
 
+    # getter
+    def get_service_name(self):
+        return self._service_name
+
+    # setter
+    def set_service_name(self, name):
+        if not name or not str(name).strip():
+            raise ValueError("Service name cannot be empty")
+
+        self._service_name = str(name).strip()
+        
     def register_user(self, username, email, password):
         email = email.lower().strip()
 
