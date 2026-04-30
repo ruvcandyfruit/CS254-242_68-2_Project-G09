@@ -18,35 +18,71 @@ class NotificationService:
             raise ValueError("Threshold days must be non-negative")
         self._threshold_days = days
 
-    def get_notifications(self):
-        today = datetime.now(timezone.utc).date()
-        threshold = today + timedelta(days=self._threshold_days)
+    def serialize(self, task):
+        return {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "deadline": task.deadline.strftime("%Y-%m-%dT%H:%M:%S"),
+            "duration": task.duration,
+            "emergency": task.emergency,
+            "score_weight": task.score_weight,
+            "course_id": task.course_id,
+        }
 
-        tasks = (
+    def get_notifications(self):
+        now = datetime.now(timezone.utc)
+        threshold = now + timedelta(hours=24)
+
+        overdue_tasks = (
             Task.query
             .join(Course, Task.course_id == Course.id)
             .filter(
                 Course.user_id == self._user_id,
                 Task.status != "done",
-                Task.deadline <= datetime(threshold.year, threshold.month, threshold.day, 23, 59, 59)
+                Task.deadline < now   
             )
             .order_by(Task.deadline.asc())
             .all()
         )
 
-        task_list = [
-            {
-                "id": task.id,
-                "title": task.title,
-                "deadline": task.deadline.strftime("%Y-%m-%dT%H:%M:%S"),
-            }
-            for task in tasks
-        ]
+        due_soon_tasks = (
+            Task.query
+            .join(Course, Task.course_id == Course.id)
+            .filter(
+                Course.user_id == self._user_id,
+                Task.status != "done",
+                Task.deadline >= now,
+                Task.deadline <= threshold
+            )
+            .order_by(Task.deadline.asc())
+            .all()
+        )
 
-        count = len(task_list)
+        overdue_list = [self.serialize(t) for t in overdue_tasks]
+        due_soon_list = [self.serialize(t) for t in due_soon_tasks]
+
+        overdue_count = len(overdue_list)
+        due_soon_count = len(due_soon_list)
+
+        messages = []
+
+        if overdue_count > 0:
+            messages.append(f"{overdue_count} overdue task(s)")
+
+        if due_soon_count > 0:
+            messages.append(f"{due_soon_count} task(s) due within 24 hours")
+
+        if not messages:
+            message = "No upcoming or overdue tasks"
+        else:
+            message = "You have " + " and ".join(messages)
+
         return {
-            "count": count,
-            "message": f"You have {count} task(s) due in the next {self._threshold_days} days",
-            "tasks": task_list,
-            "type": "DUE_SOON_3D"
+            "overdue_count": overdue_count,
+            "due_soon_count": due_soon_count,
+            "message": message,
+            "overdue_tasks": overdue_list,
+            "due_soon_tasks": due_soon_list,
+            "type": "TASK_ALERT"
         }
