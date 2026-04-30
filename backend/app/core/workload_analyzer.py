@@ -1,11 +1,10 @@
 import pandas as pd
 
-
 class WorkloadAnalyzer:
     def __init__(self, tasks):
         self.set_tasks(tasks)
 
-    # ===== getter/setter =====
+    # getter/setter
     def get_tasks(self):
         return self._tasks
 
@@ -14,97 +13,91 @@ class WorkloadAnalyzer:
             raise ValueError("Tasks must be a list")
         self._tasks = tasks
 
-    # ===== helper =====
+    # helper
     def _to_dataframe(self):
         data = []
 
         for t in self._tasks:
-            if t.duration is None:
+            if t.get_duration() is None:
                 continue
 
-            deadline = t.deadline
+            deadline = t.get_deadline()
 
             if deadline is None:
                 continue
 
             data.append({
                 "deadline": pd.to_datetime(deadline),
-                "duration": float(t.duration)
+                "duration": t.get_duration()
             })
 
         return pd.DataFrame(data)
-
-    # ===== business logic =====
-    def analyze_weekly(self):
-        df = self._to_dataframe()
-
-        if df.empty:
-            return {
-                "mode": "weekly",
-                "units": "hours",
-                "data": [],
-                "summary": {}
-            }
-
-        df["week"] = df["deadline"].dt.isocalendar().week
-        grouped = df.groupby("week")["duration"].sum()
+    
+    # reduce duplicate operation
+    def _group(self, df, col, label_prefix):
+        grouped = df.groupby(col)["duration"].sum()
 
         data = [
             {
-                "label": f"Week {int(k)}",
+                "label": f"{label_prefix} {int(k)}",
                 "total_duration": float(v)
             }
             for k, v in grouped.items()
         ]
 
-        total_hours = float(grouped.sum())
-        max_week = grouped.idxmax()
-        max_hours = float(grouped.max())
+        return grouped, data
+    
+    # summary for response
+    def _summary(self, grouped, prefix):
+        if grouped.empty:
+            return {}
+
+        return {
+            "total_hours": float(grouped.sum()),
+            "busiest_period": f"{prefix} {int(grouped.idxmax())}",
+            "max_hours": float(grouped.max())
+        }
+    
+    # for empty response
+    def _empty_response(self, mode):
+        return {
+            "mode": mode,
+            "units": "hours",
+            "data": [],
+            "summary": {}
+        }
+
+    # logic
+    def analyze_weekly(self):
+        df = self._to_dataframe()
+
+        if df.empty:
+            return self._empty_response("weekly")
+
+        df["week"] = df["deadline"].dt.isocalendar().week
+
+        grouped, data = self._group(df, "week", "Week")
 
         return {
             "mode": "weekly",
             "units": "hours",
             "data": data,
-            "summary": {
-                "total_hours": total_hours,
-                "busiest_period": f"Week {int(max_week)}",
-                "max_hours": max_hours
-            }
+            "summary": self._summary(grouped, "Week")
         }
 
     def analyze_monthly(self):
         df = self._to_dataframe()
 
         if df.empty:
-            return {
-                "mode": "monthly",
-                "units": "hours",
-                "data": [],
-                "summary": {}
-            }
+            return self._empty_response("monthly")
 
         df["month"] = df["deadline"].dt.month
-        grouped = df.groupby("month")["duration"].sum()
 
-        data = [
-            {
-                "label": f"Month {int(k)}",
-                "total_duration": float(v)
-            }
-            for k, v in grouped.items()
-        ]
-
-        total_hours = float(grouped.sum())
-        max_month = grouped.idxmax()
-        max_hours = float(grouped.max())
+        grouped, data = self._group(df, "month", "Month")
 
         return {
             "mode": "monthly",
             "units": "hours",
             "data": data,
-            "summary": {
-                "total_hours": total_hours,
-                "busiest_period": f"Month {int(max_month)}",
-                "max_hours": max_hours
-            }
+            "summary": self._summary(grouped, "Month")
         }
