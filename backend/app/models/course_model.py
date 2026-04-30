@@ -75,5 +75,14 @@ class Course(db.Model):
             "course_code": self._course_code,
             "course_weight": self._course_weight,
             "user_id": self.user_id,
-            "progress": self.calculate_progress()
+            "progress": self.calculate_progress(),
+            "pending_task_count": self.get_task_count() - len(self.get_completed_tasks())
         }
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        self.set_name(value)
