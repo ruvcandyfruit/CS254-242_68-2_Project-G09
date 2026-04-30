@@ -35,17 +35,21 @@ class WorkloadAnalyzer:
     
     # reduce duplicate operation
     def _group(self, df, col, label_prefix):
-        grouped = df.groupby(col)["duration"].sum()
+        # รวมจำนวนชั่วโมง
+        grouped_duration = df.groupby(col)["duration"].sum()
+        # รวมจำนวนงาน
+        grouped_count = df.groupby(col).size()
 
         data = [
             {
                 "label": f"{label_prefix} {int(k)}",
-                "total_duration": float(v)
+                "total_duration": float(grouped_duration[k]),
+                "task_count": int(grouped_count[k])
             }
-            for k, v in grouped.items()
+            for k in grouped_duration.index
         ]
 
-        return grouped, data
+        return grouped_duration, grouped_count, data
     
     # summary for response
     def _summary(self, grouped, prefix):
@@ -76,13 +80,13 @@ class WorkloadAnalyzer:
 
         df["week"] = df["deadline"].dt.isocalendar().week
 
-        grouped, data = self._group(df, "week", "Week")
+        grouped_duration, grouped_count, data = self._group(df,"week","Week")
 
         return {
             "mode": "weekly",
             "units": "hours",
             "data": data,
-            "summary": self._summary(grouped, "Week")
+            "summary": self._summary(grouped_duration, "Week")
         }
 
     def analyze_monthly(self):
@@ -93,11 +97,11 @@ class WorkloadAnalyzer:
 
         df["month"] = df["deadline"].dt.month
 
-        grouped, data = self._group(df, "month", "Month")
+        grouped_duration, grouped_count, data = self._group(df,"month","Month")
 
         return {
             "mode": "monthly",
             "units": "hours",
             "data": data,
-            "summary": self._summary(grouped, "Month")
+            "summary": self._summary(grouped_duration, "Month")
         }

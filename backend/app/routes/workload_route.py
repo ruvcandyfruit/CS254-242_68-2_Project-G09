@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session, request
-from app.services.workload_service import get_workload_analysis
+from app.services.workload_service import workload_service
 
 workload_bp = Blueprint("workload", __name__)
 
@@ -13,7 +13,7 @@ def get_workload():
     mode = request.args.get("mode", "weekly")
 
     try:
-        data = get_workload_analysis(user_id, mode)
+        data = workload_service.get_workload_analysis(user_id, mode)
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
