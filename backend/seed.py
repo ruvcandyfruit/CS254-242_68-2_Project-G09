@@ -22,7 +22,7 @@ with app.app_context():
     # ---- COURSE ----
     course = Course.query.filter_by(name="Math", user_id=user.id).first()
     if not course:
-        course = Course(name="Math", course_weight="3", user_id=user.id)
+        course = Course(name="Math", course_code="CS101", course_weight=1.0, user_id=user.id)
         db.session.add(course)
         db.session.commit()
 
