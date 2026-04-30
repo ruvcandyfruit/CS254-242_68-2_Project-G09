@@ -6,9 +6,9 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    _username = db.Column("username", db.String(120), nullable=False)
+    _email = db.Column("email", db.String(120), unique=True, nullable=False)
+    _password = db.Column("password", db.String(255), nullable=False)
 
     courses = db.relationship('Course', backref='user', lazy=True)
 
@@ -18,13 +18,13 @@ class User(db.Model):
         self.set_password(password)
 
     def get_username(self):
-        return self.username
+        return self._username
 
     def get_email(self):
-        return self.email
+        return self._email
 
     def get_password(self):
-        return self.password
+        return self._password
 
     def set_username(self, username):
         if not username or not username.strip():

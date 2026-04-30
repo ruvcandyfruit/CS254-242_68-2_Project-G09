@@ -77,11 +77,3 @@ class Course(db.Model):
             "user_id": self.user_id,
             "progress": self.calculate_progress()
         }
-    
-    @property
-    def name(self):
-        return self._name
-    
-    @name.setter
-    def name(self, value):
-        self.set_name(value)

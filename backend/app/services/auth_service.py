@@ -9,7 +9,7 @@ class AuthService:
     def register_user(self, username, email, password):
         email = email.lower().strip()
 
-        if User.query.filter_by(email=email).first():
+        if User.query.filter_by(_email=email).first():
             return None, "Email already registered"
 
         try:
@@ -25,7 +25,7 @@ class AuthService:
     def login_user(self, email, password):
         email = email.lower().strip()
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(_email=email).first()
 
         if not user:
             return None, "User not found"
