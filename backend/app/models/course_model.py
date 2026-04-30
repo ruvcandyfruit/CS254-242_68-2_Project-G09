@@ -10,7 +10,7 @@ class Course(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    tasks = db.relationship('Task', backref='course', lazy=True)
+    tasks = db.relationship('Task', backref='course', lazy=True, cascade='all, delete-orphan')
 
     # constructor
     def __init__(self, name, course_code, course_weight, user_id):
@@ -23,7 +23,7 @@ class Course(db.Model):
     def get_id(self):
         return self.id
 
-    def get_name(self):
+    def get_name(self):   
         return self._name
 
     def get_course_code(self):
@@ -34,26 +34,47 @@ class Course(db.Model):
 
     # setter /validation
     def set_name(self, name):
-        if not name:
+        if not name or not str(name).strip():
             raise ValueError("Name cannot be empty")
-        self._name = name
+        self._name = str(name).strip()
 
     def set_course_code(self, code):
-        if not code:
+        if not code or not str(code).strip():
             raise ValueError("Course code required")
-        self._course_code = code
+        self._course_code = str(code).strip()
 
     def set_course_weight(self, weight):
-        if weight is None or float(weight) <= 0:
+        try:
+            weight = float(weight)
+        except (ValueError, TypeError):
+            raise ValueError("Weight must be a number")
+        if weight <= 0:
             raise ValueError("Weight must be > 0")
-        self._course_weight = float(weight)
+        self._course_weight = weight
+    
+    # behavior
+    def get_task_count(self):
+        return len(self.tasks)
+
+    def get_completed_tasks(self):
+        return [t for t in self.tasks if t.status == "done"]
+
+    # business logic
+    def calculate_progress(self):
+        total = len(self.tasks)
+        if total == 0:
+            return 0.0
+        completed = len(self.get_completed_tasks())
+        return completed / total
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self._name,
             "course_code": self._course_code,
-            "course_weight": self._course_weight
+            "course_weight": self._course_weight,
+            "user_id": self.user_id,
+            "progress": self.calculate_progress()
         }
     
     @property

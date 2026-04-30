@@ -1,11 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from app.services.course_service import (
-    get_all_courses,
-    get_course_by_id,
-    create_course,
-    update_course,
-    delete_course
-)
+from app.services.course_service import course_service
 
 course_bp = Blueprint('course', __name__)
 
@@ -16,13 +10,17 @@ def get_courses():
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
-    courses = get_all_courses(user_id)
+    courses = course_service.get_all_courses(user_id)
     return jsonify(courses), 200
 
 
 @course_bp.route('/<int:course_id>', methods=['GET'])
 def get_course(course_id):
-    course, error = get_course_by_id(course_id)
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    course, error = course_service.get_course_by_id(course_id, user_id)
     if error:
         return jsonify({"error": error}), 404
     return jsonify(course), 200
@@ -35,11 +33,14 @@ def create():
         return jsonify({"error": "Unauthorized"}), 401
 
     data = request.json
-    course, error = create_course(
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    course, error = course_service.create_course(
+        user_id=user_id,
         name=data.get('name'),
         course_code=data.get('course_code'),
         course_weight=data.get('course_weight'),
-        user_id=user_id
     )
     if error:
         return jsonify({"error": error}), 400
@@ -48,16 +49,27 @@ def create():
 
 @course_bp.route('/<int:course_id>', methods=['PUT'])
 def update(course_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
     data = request.json
-    course, error = update_course(course_id, data)
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    course, error = course_service.update_course(course_id, data, user_id)
     if error:
         return jsonify({"error": error}), 400
-    return jsonify({"message": "Course updated"}),200
+    return jsonify({"message": "Course updated"}), 200
 
 
 @course_bp.route('/<int:course_id>', methods=['DELETE'])
 def delete(course_id):
-    error = delete_course(course_id)
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    error = course_service.delete_course(course_id, user_id)
     if error:
         return jsonify({"error": error}), 404
     return jsonify({"message": "Course deleted"}), 200
