@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TaskFlow Dashboard</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
     :root {
       --bg: #f5f7fb;
       --panel: #ffffff;
@@ -27,6 +28,7 @@
 
     * {
       box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
     }
 
     body {
@@ -807,7 +809,7 @@
 </head>
 
 <body>
-  <div class="loading" id="loading">กำลังเชื่อมต่อ API...</div>
+  <div class="loading" id="loading">กำลังโหลด...</div>
   <div class="toast" id="toast"></div>
 
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
@@ -829,7 +831,6 @@
         <div class="brand-mark">TF</div>
         <div>
           <h1>TaskFlow</h1>
-          <p>เว็บจัดการคอร์ส งาน เดดไลน์ และ priority จาก Flask API จริง</p>
         </div>
       </div>
       <div class="top-actions">
@@ -839,32 +840,6 @@
           style="display:none;">Logout</button>
       </div>
     </header>
-
-    <section class="auth-layout" id="authView">
-      <article class="hero-card">
-        <div class="hero-copy">
-          <div class="eyebrow">API Connected Dashboard</div>
-          <h2>จัดงานเรียนให้เป็นระบบ ไม่ใช่กองภูเขาไฟก่อนสอบ</h2>
-          <p class="lead">
-            หน้านี้ออกแบบให้ใช้โชว์งานได้จริง: สมัครสมาชิก, ล็อกอิน, เพิ่มคอร์ส, เพิ่มงาน,
-            เช็กงานด่วน, ดู workload และแจ้งเตือนงานใกล้ส่งผ่าน backend ของโปรเจกต์โดยตรง
-          </p>
-        </div>
-        <div class="feature-row">
-          <div class="feature">
-            <strong>Session Login</strong>
-            <span>ใช้ cookie session ของ Flask ด้วย fetch credentials</span>
-          </div>
-          <div class="feature">
-            <strong>Course & Task Flow</strong>
-            <span>สร้างคอร์สก่อน แล้วเพิ่ม task ผูกกับคอร์สนั้น</span>
-          </div>
-          <div class="feature">
-            <strong>Priority View</strong>
-            <span>ดึงลำดับความสำคัญจาก priority engine ใน backend</span>
-          </div>
-        </div>
-      </article>
 
       <aside class="card auth-card">
         <div class="auth-tabs">
@@ -882,29 +857,22 @@
             <input type="password" id="loginPassword" placeholder="1234" required />
           </div>
           <button class="btn btn-primary" type="submit">เข้าสู่ระบบ</button>
-          <p class="hint">
-            Backend เครื่องเธอรันที่ <strong>https://cs254-242-68-2-project-g09.onrender.com/</strong><br />
-            ถ้าเคย seed data ไว้ ลองใช้ <strong>test@mail.com / 1234</strong>
-          </p>
         </form>
 
         <form class="form" id="registerForm" onsubmit="submitRegister(event)" style="display:none;">
           <div class="field">
             <label>Username</label>
-            <input type="text" id="registerUsername" placeholder="Hamtaro" required />
+            <input type="text" id="registerUsername" placeholder="Username" required />
           </div>
           <div class="field">
             <label>Email</label>
-            <input type="email" id="registerEmail" placeholder="you@mail.com" required />
+            <input type="email" id="registerEmail" placeholder="Email" required />
           </div>
           <div class="field">
             <label>Password</label>
-            <input type="password" id="registerPassword" placeholder="อย่างน้อย 4 ตัวก็พอสำหรับเดโม" required />
+            <input type="password" id="registerPassword" placeholder="Password"  required />
           </div>
-          <button class="btn btn-primary" type="submit">สมัครสมาชิก</button>
-          <p class="hint">
-            สมัครเสร็จแล้วระบบจะพาเข้า dashboard ให้อัตโนมัติ ถ้า backend ตอบ error จะแสดงข้อความด้านล่างขวา
-          </p>
+          <button class="btn btn-primary" type="submit">สมัครสมาชิก</button>  
         </form>
       </aside>
     </section>
@@ -946,7 +914,6 @@
               <div class="section-head">
                 <div>
                   <h2 style="font-size:22px;">งานที่ควรทำก่อน</h2>
-                  <p>ดึงจาก /api/task/prioritized</p>
                 </div>
               </div>
               <div class="item-list" id="overviewPriorityList"></div>
@@ -1068,7 +1035,6 @@
           <div class="section-head">
             <div>
               <h2>Priority</h2>
-              <p>ลำดับงานจาก priority engine ของ backend</p>
             </div>
             <button class="btn btn-primary" type="button" onclick="loadPriority()">คำนวณใหม่</button>
           </div>
@@ -1511,7 +1477,7 @@
 
       $("dueSoonList").innerHTML = dueSoon.length
         ? dueSoon.map(task => renderNoticeCard(task, "due")).join("")
-        : `<div class="empty">ไม่มีงานใกล้ deadline ในช่วงที่ backend กำหนด</div>`;
+        : `<div class="empty">ไม่มีงานใกล้ deadline ในช่วงที่กำหนด</div>`;
     }
 
     function renderOverview() {
@@ -1559,7 +1525,6 @@
         $("workloadView").innerHTML = `
           <div class="empty">
             ยังไม่มี workload ให้แสดง<br />
-            backend จะวิเคราะห์เฉพาะ task ที่มี duration และ deadline
           </div>
         `;
         return;
@@ -1587,7 +1552,6 @@
         </div>
         <div class="divider"></div>
         <details>
-          <summary style="cursor:pointer; font-weight:800;">ดู raw response จาก API</summary>
           <pre style="white-space:pre-wrap; overflow:auto; background:#0f172a; color:#e2e8f0; padding:14px; border-radius:16px;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
         </details>
       `;
