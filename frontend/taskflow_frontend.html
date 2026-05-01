@@ -1,0 +1,1880 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskFlow Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-2: #f8fafc;
+      --text: #172033;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+      --warning: #d97706;
+      --warning-soft: #fef3c7;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 28rem),
+        radial-gradient(circle at top right, rgba(22, 163, 74, 0.10), transparent 26rem),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      width: min(1420px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #0f172a);
+      box-shadow: var(--shadow);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: -0.04em;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .user-pill {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-light {
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      color: white;
+      background: var(--danger);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .auth-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .hero-card,
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-card {
+      padding: clamp(24px, 5vw, 48px);
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -90px -120px auto;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.10);
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .hero-card h2 {
+      margin: 0;
+      max-width: 720px;
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 0.96;
+      letter-spacing: -0.06em;
+    }
+
+    .hero-card .lead {
+      margin: 22px 0 0;
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .feature-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .feature {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 15px;
+    }
+
+    .feature span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .auth-card {
+      padding: 24px;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 5px;
+      border-radius: 17px;
+      background: var(--panel-2);
+      margin-bottom: 18px;
+    }
+
+    .auth-tab {
+      min-height: 42px;
+      border-radius: 13px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .auth-tab.active {
+      background: white;
+      color: var(--text);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .form {
+      display: grid;
+      gap: 13px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      background: white;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .field textarea {
+      min-height: 94px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(37, 99, 235, 0.65);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .hint {
+      margin: 10px 0 0;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .dashboard {
+      display: none;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      margin-bottom: 6px;
+      border-radius: 15px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .api-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #0f172a;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .api-box strong {
+      color: white;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 15px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .section-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .cards-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 20px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 31px;
+      letter-spacing: -0.04em;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .item-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .empty {
+      padding: 22px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+
+    .course-card,
+    .task-card,
+    .notice-card,
+    .priority-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      padding: 15px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .item-sub {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mini-btn {
+      padding: 8px 10px;
+      border-radius: 11px;
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid var(--line);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .mini-btn.danger {
+      color: #991b1b;
+      background: var(--danger-soft);
+      border-color: #fecaca;
+    }
+
+    .mini-btn.success {
+      color: #166534;
+      background: var(--success-soft);
+      border-color: #bbf7d0;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tag.high {
+      background: var(--danger-soft);
+      color: #991b1b;
+    }
+
+    .tag.medium {
+      background: var(--warning-soft);
+      color: #92400e;
+    }
+
+    .tag.low {
+      background: var(--success-soft);
+      color: #166534;
+    }
+
+    .tag.done {
+      background: var(--success-soft);
+      color: #166534;
+    }
+
+    .tag.pending {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 16px 0;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      min-width: 250px;
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      outline: none;
+      background: white;
+    }
+
+    .mode-toggle {
+      display: flex;
+      gap: 7px;
+      padding: 5px;
+      background: #f1f5f9;
+      border-radius: 14px;
+    }
+
+    .mode-toggle button {
+      padding: 8px 11px;
+      border-radius: 11px;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 800;
+    }
+
+    .mode-toggle button.active {
+      color: var(--primary);
+      background: white;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-item {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      border-radius: inherit;
+      transition: width 0.3s ease;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      width: min(420px, calc(100% - 36px));
+      display: none;
+      padding: 14px 16px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      background: #0f172a;
+      color: white;
+      line-height: 1.55;
+    }
+
+    .toast.error {
+      background: #991b1b;
+    }
+
+    .toast.success {
+      background: #14532d;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal {
+      width: min(620px, 100%);
+      max-height: min(720px, calc(100vh - 36px));
+      overflow: auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 45;
+      background: rgba(245, 247, 251, 0.55);
+      backdrop-filter: blur(3px);
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    @media (max-width: 1080px) {
+
+      .auth-layout,
+      .dashboard,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .cards-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        width: min(100% - 22px, 1420px);
+        padding-top: 16px;
+      }
+
+      .topbar,
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .feature-row,
+      .cards-4,
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+
+      .item-top {
+        flex-direction: column;
+      }
+
+      .item-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loading" id="loading">กำลังเชื่อมต่อ API...</div>
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div>
+          <h3 id="modalTitle">Edit</h3>
+          <p id="modalDesc">แก้ไขข้อมูล</p>
+        </div>
+        <button class="mini-btn" type="button" onclick="closeModal()">ปิด</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">TF</div>
+        <div>
+          <h1>TaskFlow</h1>
+          <p>เว็บจัดการคอร์ส งาน เดดไลน์ และ priority จาก Flask API จริง</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="user-pill" id="userPill"></div>
+        <button class="btn btn-light" type="button" onclick="refreshAll()">Refresh</button>
+        <button class="btn btn-danger" type="button" id="logoutBtn" onclick="logout()"
+          style="display:none;">Logout</button>
+      </div>
+    </header>
+
+    <section class="auth-layout" id="authView">
+      <article class="hero-card">
+        <div class="hero-copy">
+          <div class="eyebrow">API Connected Dashboard</div>
+          <h2>จัดงานเรียนให้เป็นระบบ ไม่ใช่กองภูเขาไฟก่อนสอบ</h2>
+          <p class="lead">
+            หน้านี้ออกแบบให้ใช้โชว์งานได้จริง: สมัครสมาชิก, ล็อกอิน, เพิ่มคอร์ส, เพิ่มงาน,
+            เช็กงานด่วน, ดู workload และแจ้งเตือนงานใกล้ส่งผ่าน backend ของโปรเจกต์โดยตรง
+          </p>
+        </div>
+        <div class="feature-row">
+          <div class="feature">
+            <strong>Session Login</strong>
+            <span>ใช้ cookie session ของ Flask ด้วย fetch credentials</span>
+          </div>
+          <div class="feature">
+            <strong>Course & Task Flow</strong>
+            <span>สร้างคอร์สก่อน แล้วเพิ่ม task ผูกกับคอร์สนั้น</span>
+          </div>
+          <div class="feature">
+            <strong>Priority View</strong>
+            <span>ดึงลำดับความสำคัญจาก priority engine ใน backend</span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" type="button" id="loginTab" onclick="switchAuth('login')">Login</button>
+          <button class="auth-tab" type="button" id="registerTab" onclick="switchAuth('register')">Register</button>
+        </div>
+
+        <form class="form" id="loginForm" onsubmit="submitLogin(event)">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="test@mail.com" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="1234" required />
+          </div>
+          <button class="btn btn-primary" type="submit">เข้าสู่ระบบ</button>
+          <p class="hint">
+            Backend เครื่องเธอรันที่ <strong>https://cs254-242-68-2-project-g09.onrender.com/</strong><br />
+            ถ้าเคย seed data ไว้ ลองใช้ <strong>test@mail.com / 1234</strong>
+          </p>
+        </form>
+
+        <form class="form" id="registerForm" onsubmit="submitRegister(event)" style="display:none;">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="registerUsername" placeholder="Hamtaro" required />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="registerEmail" placeholder="you@mail.com" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="registerPassword" placeholder="อย่างน้อย 4 ตัวก็พอสำหรับเดโม" required />
+          </div>
+          <button class="btn btn-primary" type="submit">สมัครสมาชิก</button>
+          <p class="hint">
+            สมัครเสร็จแล้วระบบจะพาเข้า dashboard ให้อัตโนมัติ ถ้า backend ตอบ error จะแสดงข้อความด้านล่างขวา
+          </p>
+        </form>
+      </aside>
+    </section>
+
+    <section class="dashboard" id="dashboardView">
+      <aside class="sidebar">
+        <button class="nav-btn active" type="button" data-section="overview"
+          onclick="showSection('overview')">ภาพรวม</button>
+        <button class="nav-btn" type="button" data-section="courses"
+          onclick="showSection('courses')">จัดการคอร์ส</button>
+        <button class="nav-btn" type="button" data-section="tasks" onclick="showSection('tasks')">จัดการงาน</button>
+        <button class="nav-btn" type="button" data-section="priority"
+          onclick="showSection('priority')">Priority</button>
+        <button class="nav-btn" type="button" data-section="workload"
+          onclick="showSection('workload')">Workload</button>
+        <button class="nav-btn" type="button" data-section="notifications"
+          onclick="showSection('notifications')">Notifications</button>
+        <div class="api-box">
+          <strong>API Base</strong><br />
+          <span id="apiBaseText"></span><br /><br />
+          เปิด frontend ที่ port 5500 และ backend ที่ port 10000
+        </div>
+      </aside>
+
+      <section class="content">
+        <section class="section active" id="section-overview">
+          <div class="section-head">
+            <div>
+              <h2>Dashboard</h2>
+              <p>สรุปคอร์ส งาน สถานะ และแจ้งเตือนจาก API</p>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="refreshAll()">โหลดข้อมูลใหม่</button>
+          </div>
+
+          <div class="cards-4">
+            <div class="stat"><span>Courses</span><strong id="statCourses">0</strong></div>
+            <div class="stat"><span>Tasks</span><strong id="statTasks">0</strong></div>
+            <div class="stat"><span>Done</span><strong id="statDone">0</strong></div>
+            <div class="stat"><span>Due / Overdue</span><strong id="statAlerts">0</strong></div>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <div class="section-head">
+                <div>
+                  <h2 style="font-size:22px;">งานที่ควรทำก่อน</h2>
+                  <p>ดึงจาก /api/task/prioritized</p>
+                </div>
+              </div>
+              <div class="item-list" id="overviewPriorityList"></div>
+            </div>
+
+            <div class="card">
+              <div class="section-head">
+                <div>
+                  <h2 style="font-size:22px;">แจ้งเตือนล่าสุด</h2>
+                  <p>งานค้างและงานใกล้ส่ง</p>
+                </div>
+              </div>
+              <div class="item-list" id="overviewNoticeList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-courses">
+          <div class="section-head">
+            <div>
+              <h2>Courses</h2>
+              <p>เพิ่ม แก้ ลบคอร์ส และดู progress ของแต่ละคอร์ส</p>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <h3 style="margin-top:0;">เพิ่มคอร์สใหม่</h3>
+              <form class="form" onsubmit="createCourse(event)">
+                <div class="field">
+                  <label>ชื่อวิชา</label>
+                  <input id="courseName" placeholder="Software Engineering" required />
+                </div>
+                <div class="field">
+                  <label>รหัสวิชา</label>
+                  <input id="courseCode" placeholder="CS242" required />
+                </div>
+                <div class="field">
+                  <label>น้ำหนักวิชา</label>
+                  <input id="courseWeight" type="number" step="0.1" min="0.1" value="1.0" required />
+                </div>
+                <button class="btn btn-primary" type="submit">สร้างคอร์ส</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="toolbar" style="margin-bottom:12px;">
+                <input class="search" id="courseSearch" placeholder="ค้นหาคอร์ส..." oninput="renderCourses()" />
+              </div>
+              <div class="item-list" id="courseList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-tasks">
+          <div class="section-head">
+            <div>
+              <h2>Tasks</h2>
+              <p>สร้างงาน ผูกกับคอร์ส เปลี่ยนสถานะ แก้ไข และลบงาน</p>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <h3 style="margin-top:0;">เพิ่มงานใหม่</h3>
+              <form class="form" onsubmit="createTask(event)">
+                <div class="field">
+                  <label>คอร์ส</label>
+                  <select id="taskCourse" required></select>
+                </div>
+                <div class="field">
+                  <label>ชื่องาน</label>
+                  <input id="taskTitle" placeholder="Homework 1" required />
+                </div>
+                <div class="field">
+                  <label>รายละเอียด</label>
+                  <textarea id="taskDescription" placeholder="สรุปสิ่งที่ต้องทำ..."></textarea>
+                </div>
+                <div class="field">
+                  <label>Deadline</label>
+                  <input id="taskDeadline" type="datetime-local" required />
+                </div>
+                <div class="three-col">
+                  <div class="field">
+                    <label>ชั่วโมงที่ใช้</label>
+                    <input id="taskDuration" type="number" min="0" value="2" />
+                  </div>
+                  <div class="field">
+                    <label>คะแนน/น้ำหนักงาน</label>
+                    <input id="taskScore" type="number" min="1" max="100" value="10" required />
+                  </div>
+                  <div class="field">
+                    <label>ฉุกเฉินไหม</label>
+                    <select id="taskEmergency">
+                      <option value="false">ไม่ฉุกเฉิน</option>
+                      <option value="true">ฉุกเฉิน</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="submit">สร้างงาน</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="toolbar" style="margin-bottom:12px;">
+                <input class="search" id="taskSearch" placeholder="ค้นหางาน..." oninput="renderTasks()" />
+                <select id="taskStatusFilter" class="search" style="min-width:160px; flex:0;" onchange="renderTasks()">
+                  <option value="all">ทุกสถานะ</option>
+                  <option value="pending">pending</option>
+                  <option value="done">done</option>
+                </select>
+              </div>
+              <div class="item-list" id="taskList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-priority">
+          <div class="section-head">
+            <div>
+              <h2>Priority</h2>
+              <p>ลำดับงานจาก priority engine ของ backend</p>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="loadPriority()">คำนวณใหม่</button>
+          </div>
+          <div class="card">
+            <div class="item-list" id="priorityList"></div>
+          </div>
+        </section>
+
+        <section class="section" id="section-workload">
+          <div class="section-head">
+            <div>
+              <h2>Workload</h2>
+              <p>วิเคราะห์เวลางานแบบ weekly / monthly</p>
+            </div>
+            <div class="mode-toggle">
+              <button type="button" id="weeklyBtn" class="active" onclick="loadWorkload('weekly')">Weekly</button>
+              <button type="button" id="monthlyBtn" onclick="loadWorkload('monthly')">Monthly</button>
+            </div>
+          </div>
+          <div class="card">
+            <div id="workloadView"></div>
+          </div>
+        </section>
+
+        <section class="section" id="section-notifications">
+          <div class="section-head">
+            <div>
+              <h2>Notifications</h2>
+              <p>งาน overdue และงานที่ใกล้ deadline</p>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="loadNotifications()">โหลดแจ้งเตือนใหม่</button>
+          </div>
+          <div class="two-col">
+            <div class="card">
+              <h3 style="margin-top:0;">Overdue</h3>
+              <div class="item-list" id="overdueList"></div>
+            </div>
+            <div class="card">
+              <h3 style="margin-top:0;">Due Soon</h3>
+              <div class="item-list" id="dueSoonList"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    // แก้ตรงนี้ถ้า backend เปลี่ยน port
+    const API_BASE_URL = "https://cs254-242-68-2-project-g09.onrender.com/";
+
+    const state = {
+      user: JSON.parse(localStorage.getItem("taskflow_user") || "null"),
+      courses: [],
+      tasks: [],
+      priority: [],
+      notifications: null,
+      workload: null,
+      workloadMode: "weekly"
+    };
+
+    document.getElementById("apiBaseText").textContent = API_BASE_URL;
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showLoading(show) {
+      $("loading").style.display = show ? "flex" : "none";
+    }
+
+    function toast(message, type = "success") {
+      const el = $("toast");
+      el.textContent = message;
+      el.className = `toast ${type}`;
+      el.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        el.style.display = "none";
+      }, 3600);
+    }
+
+    async function apiFetch(path, options = {}) {
+      const headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      };
+
+      const response = await fetch(`${API_BASE_URL}${path}`, {
+        ...options,
+        headers,
+        credentials: "include"
+      });
+
+      let data = null;
+      const text = await response.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+      }
+
+      if (!response.ok) {
+        const msg = typeof data === "object" && data !== null
+          ? (data.error || data.message || JSON.stringify(data))
+          : (data || `HTTP ${response.status}`);
+        throw new Error(msg);
+      }
+
+      return data;
+    }
+
+    function switchAuth(mode) {
+      const isLogin = mode === "login";
+      $("loginTab").classList.toggle("active", isLogin);
+      $("registerTab").classList.toggle("active", !isLogin);
+      $("loginForm").style.display = isLogin ? "grid" : "none";
+      $("registerForm").style.display = isLogin ? "none" : "grid";
+    }
+
+    async function submitLogin(event) {
+      event.preventDefault();
+      try {
+        showLoading(true);
+        const data = await apiFetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email: $("loginEmail").value.trim(),
+            password: $("loginPassword").value
+          })
+        });
+
+        state.user = data.user;
+        localStorage.setItem("taskflow_user", JSON.stringify(state.user));
+        showApp();
+        await refreshAll();
+        toast("เข้าสู่ระบบสำเร็จ");
+      } catch (err) {
+        toast(`Login ไม่ผ่าน: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function submitRegister(event) {
+      event.preventDefault();
+      try {
+        showLoading(true);
+        await apiFetch("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify({
+            username: $("registerUsername").value.trim(),
+            email: $("registerEmail").value.trim(),
+            password: $("registerPassword").value
+          })
+        });
+
+        const loginData = await apiFetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email: $("registerEmail").value.trim(),
+            password: $("registerPassword").value
+          })
+        });
+
+        state.user = loginData.user;
+        localStorage.setItem("taskflow_user", JSON.stringify(state.user));
+        showApp();
+        await refreshAll();
+        toast("สมัครสมาชิกและเข้าสู่ระบบสำเร็จ");
+      } catch (err) {
+        toast(`Register ไม่ผ่าน: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function logout() {
+      try {
+        showLoading(true);
+        await apiFetch("/api/auth/logout", { method: "POST" });
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        state.user = null;
+        localStorage.removeItem("taskflow_user");
+        showApp();
+        showLoading(false);
+        toast("ออกจากระบบแล้ว");
+      }
+    }
+
+    function showApp() {
+      const loggedIn = Boolean(state.user);
+      $("authView").style.display = loggedIn ? "none" : "grid";
+      $("dashboardView").style.display = loggedIn ? "grid" : "none";
+      $("logoutBtn").style.display = loggedIn ? "inline-flex" : "none";
+      $("userPill").style.display = loggedIn ? "inline-flex" : "none";
+
+      if (loggedIn) {
+        $("userPill").innerHTML = `<strong>${escapeHtml(state.user.username || "User")}</strong> <span>${escapeHtml(state.user.email || "")}</span>`;
+      } else {
+        $("userPill").innerHTML = "";
+      }
+    }
+
+    function showSection(name) {
+      document.querySelectorAll(".section").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+      $(`section-${name}`).classList.add("active");
+      document.querySelector(`[data-section="${name}"]`).classList.add("active");
+    }
+
+    async function refreshAll() {
+      if (!state.user) {
+        toast("ต้อง login ก่อนใช้งาน dashboard", "error");
+        return;
+      }
+
+      try {
+        showLoading(true);
+        await Promise.all([
+          loadCourses(false),
+          loadTasks(false),
+          loadPriority(false),
+          loadNotifications(false),
+          loadWorkload(state.workloadMode, false)
+        ]);
+        renderAll();
+      } catch (err) {
+        if (err.message.toLowerCase().includes("unauthorized")) {
+          state.user = null;
+          localStorage.removeItem("taskflow_user");
+          showApp();
+          toast("Session หมดอายุหรือยังไม่ได้ login", "error");
+        } else {
+          toast(`โหลดข้อมูลไม่สำเร็จ: ${err.message}`, "error");
+        }
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function loadCourses(shouldRender = true) {
+      state.courses = await apiFetch("/api/course");
+      if (shouldRender) renderAll();
+    }
+
+    async function loadTasks(shouldRender = true) {
+      state.tasks = await apiFetch("/api/task");
+      if (shouldRender) renderAll();
+    }
+
+    async function loadPriority(shouldRender = true) {
+      state.priority = await apiFetch("/api/task/prioritized");
+      if (shouldRender) renderAll();
+    }
+
+    async function loadNotifications(shouldRender = true) {
+      state.notifications = await apiFetch("/api/notification/");
+      if (shouldRender) renderAll();
+    }
+
+    async function loadWorkload(mode = "weekly", shouldRender = true) {
+      state.workloadMode = mode;
+      $("weeklyBtn")?.classList.toggle("active", mode === "weekly");
+      $("monthlyBtn")?.classList.toggle("active", mode === "monthly");
+      state.workload = await apiFetch(`/api/workload/?mode=${mode}`);
+      if (shouldRender) renderAll();
+    }
+
+    function renderAll() {
+      renderStats();
+      renderCourseSelect();
+      renderCourses();
+      renderTasks();
+      renderPriority();
+      renderNotifications();
+      renderWorkload();
+      renderOverview();
+    }
+
+    function renderStats() {
+      const doneCount = state.tasks.filter(t => t.status === "done").length;
+      const alertCount = (state.notifications?.overdue_count || 0) + (state.notifications?.due_soon_count || 0);
+
+      $("statCourses").textContent = state.courses.length;
+      $("statTasks").textContent = state.tasks.length;
+      $("statDone").textContent = doneCount;
+      $("statAlerts").textContent = alertCount;
+    }
+
+    function renderCourseSelect() {
+      const options = state.courses.map(course =>
+        `<option value="${escapeHtml(course.id)}">${escapeHtml(course.course_code)} - ${escapeHtml(course.name)}</option>`
+      ).join("");
+
+      $("taskCourse").innerHTML = options || `<option value="">ยังไม่มีคอร์ส</option>`;
+      $("taskCourse").disabled = state.courses.length === 0;
+    }
+
+    function renderCourses() {
+      const keyword = $("courseSearch")?.value?.trim().toLowerCase() || "";
+      const courses = state.courses.filter(course => {
+        const text = `${course.name} ${course.course_code}`.toLowerCase();
+        return text.includes(keyword);
+      });
+
+      if (!courses.length) {
+        $("courseList").innerHTML = `<div class="empty">ยังไม่มีคอร์ส หรือไม่เจอผลลัพธ์ที่ค้นหา</div>`;
+        return;
+      }
+
+      $("courseList").innerHTML = courses.map(course => `
+        <article class="course-card">
+          <div class="item-top">
+            <div>
+              <h3 class="item-title">${escapeHtml(course.name)}</h3>
+              <p class="item-sub">${escapeHtml(course.course_code)} · น้ำหนัก ${escapeHtml(course.course_weight)}</p>
+            </div>
+            <div class="item-actions">
+              <button class="mini-btn" type="button" onclick="openCourseEdit(${Number(course.id)})">แก้ไข</button>
+              <button class="mini-btn danger" type="button" onclick="deleteCourse(${Number(course.id)})">ลบ</button>
+            </div>
+          </div>
+          <div class="meta-row">
+            <span class="tag">Progress ${escapeHtml(course.progress || "0%")}</span>
+            <span class="tag">Pending ${escapeHtml(course.pending_task_count ?? 0)}</span>
+            <span class="tag">ID ${escapeHtml(course.id)}</span>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderTasks() {
+      const keyword = $("taskSearch")?.value?.trim().toLowerCase() || "";
+      const status = $("taskStatusFilter")?.value || "all";
+
+      const tasks = state.tasks.filter(task => {
+        const text = `${task.title} ${task.description || ""}`.toLowerCase();
+        const keywordOk = text.includes(keyword);
+        const statusOk = status === "all" || task.status === status;
+        return keywordOk && statusOk;
+      });
+
+      if (!tasks.length) {
+        $("taskList").innerHTML = `<div class="empty">ยังไม่มีงาน หรือไม่เจอผลลัพธ์ที่ค้นหา</div>`;
+        return;
+      }
+
+      $("taskList").innerHTML = tasks.map(task => `
+        <article class="task-card">
+          <div class="item-top">
+            <div>
+              <h3 class="item-title">${escapeHtml(task.title)}</h3>
+              <p class="item-sub">${escapeHtml(task.description || "ไม่มีรายละเอียด")}</p>
+            </div>
+            <div class="item-actions">
+              <button class="mini-btn success" type="button" onclick="toggleTaskStatus(${Number(task.id)})">
+                ${task.status === "done" ? "กลับเป็น pending" : "ทำเสร็จแล้ว"}
+              </button>
+              <button class="mini-btn" type="button" onclick="openTaskEdit(${Number(task.id)})">แก้ไข</button>
+              <button class="mini-btn danger" type="button" onclick="deleteTask(${Number(task.id)})">ลบ</button>
+            </div>
+          </div>
+          <div class="meta-row">
+            <span class="tag ${task.status === "done" ? "done" : "pending"}">${escapeHtml(task.status)}</span>
+            <span class="tag">Deadline ${formatDate(task.deadline)}</span>
+            <span class="tag">Duration ${escapeHtml(task.duration ?? "-")}h</span>
+            <span class="tag">Score ${escapeHtml(task.score_weight)}</span>
+            ${task.emergency ? `<span class="tag high">Emergency</span>` : ""}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderPriority() {
+      if (!state.priority.length) {
+        $("priorityList").innerHTML = `<div class="empty">ยังไม่มีงาน pending สำหรับคำนวณ priority</div>`;
+        $("overviewPriorityList").innerHTML = `<div class="empty">ยังไม่มีงาน priority</div>`;
+        return;
+      }
+
+      const html = state.priority.map((item, index) => {
+        const label = String(item.priority?.label || "LOW").toLowerCase();
+        return `
+          <article class="priority-card">
+            <div class="item-top">
+              <div>
+                <h3 class="item-title">#${index + 1} ${escapeHtml(item.title)}</h3>
+                <p class="item-sub">${escapeHtml(item.course?.course_code || "")} ${escapeHtml(item.course?.name || "")}</p>
+              </div>
+              <span class="tag ${label}">${escapeHtml(item.priority?.label || "LOW")}</span>
+            </div>
+            <div class="meta-row">
+              <span class="tag">Score ${escapeHtml(item.priority?.score ?? 0)}</span>
+              <span class="tag">Deadline ${formatDate(item.deadline)}</span>
+              <span class="tag">Weight ${escapeHtml(item.score_weight)}</span>
+              ${item.emergency ? `<span class="tag high">Emergency</span>` : ""}
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      $("priorityList").innerHTML = html;
+      $("overviewPriorityList").innerHTML = state.priority.slice(0, 4).map((item, index) => {
+        const label = String(item.priority?.label || "LOW").toLowerCase();
+        return `
+          <article class="priority-card">
+            <div class="item-top">
+              <div>
+                <h3 class="item-title">#${index + 1} ${escapeHtml(item.title)}</h3>
+                <p class="item-sub">${escapeHtml(item.course?.course_code || "")} · ${formatDate(item.deadline)}</p>
+              </div>
+              <span class="tag ${label}">${escapeHtml(item.priority?.label || "LOW")}</span>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderNotifications() {
+      const overdue = state.notifications?.overdue_tasks || [];
+      const dueSoon = state.notifications?.due_soon_tasks || [];
+
+      $("overdueList").innerHTML = overdue.length
+        ? overdue.map(task => renderNoticeCard(task, "overdue")).join("")
+        : `<div class="empty">ไม่มีงาน overdue</div>`;
+
+      $("dueSoonList").innerHTML = dueSoon.length
+        ? dueSoon.map(task => renderNoticeCard(task, "due")).join("")
+        : `<div class="empty">ไม่มีงานใกล้ deadline ในช่วงที่ backend กำหนด</div>`;
+    }
+
+    function renderOverview() {
+      const overdue = state.notifications?.overdue_tasks || [];
+      const dueSoon = state.notifications?.due_soon_tasks || [];
+      const combined = [
+        ...overdue.map(t => ({ ...t, type: "overdue" })),
+        ...dueSoon.map(t => ({ ...t, type: "due" }))
+      ];
+
+      $("overviewNoticeList").innerHTML = combined.length
+        ? combined.slice(0, 5).map(task => renderNoticeCard(task, task.type)).join("")
+        : `<div class="empty">ตอนนี้ยังไม่มีแจ้งเตือน</div>`;
+    }
+
+    function renderNoticeCard(task, type) {
+      return `
+        <article class="notice-card">
+          <div class="item-top">
+            <div>
+              <h3 class="item-title">${escapeHtml(task.title)}</h3>
+              <p class="item-sub">${escapeHtml(task.description || "ไม่มีรายละเอียด")}</p>
+            </div>
+            <span class="tag ${type === "overdue" ? "high" : "medium"}">${type === "overdue" ? "Overdue" : "Due Soon"}</span>
+          </div>
+          <div class="meta-row">
+            <span class="tag">Deadline ${formatDate(task.deadline)}</span>
+            <span class="tag">Score ${escapeHtml(task.score_weight)}</span>
+            ${task.emergency ? `<span class="tag high">Emergency</span>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderWorkload() {
+      const data = state.workload;
+      if (!data) {
+        $("workloadView").innerHTML = `<div class="empty">ยังไม่มีข้อมูล workload</div>`;
+        return;
+      }
+
+      const entries = normalizeWorkload(data);
+
+      if (!entries.length) {
+        $("workloadView").innerHTML = `
+          <div class="empty">
+            ยังไม่มี workload ให้แสดง<br />
+            backend จะวิเคราะห์เฉพาะ task ที่มี duration และ deadline
+          </div>
+        `;
+        return;
+      }
+
+      const maxValue = Math.max(...entries.map(item => Number(item.value) || 0), 1);
+
+      $("workloadView").innerHTML = `
+        <div class="bar-list">
+          ${entries.map(item => {
+        const value = Number(item.value) || 0;
+        const width = Math.min(100, Math.round((value / maxValue) * 100));
+        return `
+              <div class="bar-item">
+                <div class="bar-label">
+                  <span>${escapeHtml(item.label)}</span>
+                  <span>${escapeHtml(value)} ชั่วโมง</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${width}%"></div>
+                </div>
+              </div>
+            `;
+      }).join("")}
+        </div>
+        <div class="divider"></div>
+        <details>
+          <summary style="cursor:pointer; font-weight:800;">ดู raw response จาก API</summary>
+          <pre style="white-space:pre-wrap; overflow:auto; background:#0f172a; color:#e2e8f0; padding:14px; border-radius:16px;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+        </details>
+      `;
+    }
+
+    function normalizeWorkload(data) {
+      if (Array.isArray(data)) {
+        return data.map((item, index) => {
+          if (typeof item === "number") return { label: `Item ${index + 1}`, value: item };
+          return {
+            label: item.label || item.week || item.month || item.date || item.name || `Item ${index + 1}`,
+            value: item.total_duration || item.duration || item.hours || item.value || item.total || 0
+          };
+        });
+      }
+
+      if (typeof data === "object" && data !== null) {
+        const maybeArray = data.data || data.workload || data.weekly || data.monthly || data.result;
+        if (Array.isArray(maybeArray)) return normalizeWorkload(maybeArray);
+
+        return Object.entries(data)
+          .filter(([, value]) => typeof value === "number")
+          .map(([key, value]) => ({ label: key, value }));
+      }
+
+      return [];
+    }
+
+    async function createCourse(event) {
+      event.preventDefault();
+      try {
+        showLoading(true);
+        await apiFetch("/api/course", {
+          method: "POST",
+          body: JSON.stringify({
+            name: $("courseName").value.trim(),
+            course_code: $("courseCode").value.trim(),
+            course_weight: Number($("courseWeight").value)
+          })
+        });
+        event.target.reset();
+        $("courseWeight").value = "1.0";
+        await refreshAll();
+        toast("สร้างคอร์สสำเร็จ");
+      } catch (err) {
+        toast(`สร้างคอร์สไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function openCourseEdit(courseId) {
+      const course = state.courses.find(c => Number(c.id) === Number(courseId));
+      if (!course) return;
+
+      $("modalTitle").textContent = "แก้ไขคอร์ส";
+      $("modalDesc").textContent = "แก้ชื่อวิชา รหัสวิชา และน้ำหนักวิชา";
+      $("modalBody").innerHTML = `
+        <form class="form" onsubmit="updateCourse(event, ${Number(course.id)})">
+          <div class="field">
+            <label>ชื่อวิชา</label>
+            <input id="editCourseName" value="${escapeHtml(course.name)}" required />
+          </div>
+          <div class="field">
+            <label>รหัสวิชา</label>
+            <input id="editCourseCode" value="${escapeHtml(course.course_code)}" required />
+          </div>
+          <div class="field">
+            <label>น้ำหนักวิชา</label>
+            <input id="editCourseWeight" type="number" step="0.1" min="0.1" value="${escapeHtml(course.course_weight)}" required />
+          </div>
+          <button class="btn btn-primary" type="submit">บันทึก</button>
+        </form>
+      `;
+      openModal();
+    }
+
+    async function updateCourse(event, courseId) {
+      event.preventDefault();
+      try {
+        showLoading(true);
+        await apiFetch(`/api/course/${courseId}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            name: $("editCourseName").value.trim(),
+            course_code: $("editCourseCode").value.trim(),
+            course_weight: Number($("editCourseWeight").value)
+          })
+        });
+        closeModal();
+        await refreshAll();
+        toast("อัปเดตคอร์สสำเร็จ");
+      } catch (err) {
+        toast(`อัปเดตคอร์สไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function deleteCourse(courseId) {
+      if (!confirm("ลบคอร์สนี้ไหม? งานในคอร์สอาจถูกลบตามด้วยตามความสัมพันธ์ใน database")) return;
+
+      try {
+        showLoading(true);
+        await apiFetch(`/api/course/${courseId}`, { method: "DELETE" });
+        await refreshAll();
+        toast("ลบคอร์สสำเร็จ");
+      } catch (err) {
+        toast(`ลบคอร์สไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function createTask(event) {
+      event.preventDefault();
+      if (!state.courses.length) {
+        toast("ต้องสร้างคอร์สก่อนถึงจะเพิ่มงานได้", "error");
+        return;
+      }
+
+      try {
+        showLoading(true);
+        await apiFetch("/api/task", {
+          method: "POST",
+          body: JSON.stringify({
+            title: $("taskTitle").value.trim(),
+            description: $("taskDescription").value.trim(),
+            deadline: $("taskDeadline").value,
+            duration: $("taskDuration").value === "" ? null : Number($("taskDuration").value),
+            emergency: $("taskEmergency").value === "true",
+            score_weight: Number($("taskScore").value),
+            course_id: Number($("taskCourse").value)
+          })
+        });
+        event.target.reset();
+        $("taskDuration").value = "2";
+        $("taskScore").value = "10";
+        setDefaultDeadline();
+        await refreshAll();
+        toast("สร้างงานสำเร็จ");
+      } catch (err) {
+        toast(`สร้างงานไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function openTaskEdit(taskId) {
+      const task = state.tasks.find(t => Number(t.id) === Number(taskId));
+      if (!task) return;
+
+      $("modalTitle").textContent = "แก้ไขงาน";
+      $("modalDesc").textContent = "backend ตอนนี้รองรับการแก้ title, deadline, duration, score_weight";
+      $("modalBody").innerHTML = `
+        <form class="form" onsubmit="updateTask(event, ${Number(task.id)})">
+          <div class="field">
+            <label>ชื่องาน</label>
+            <input id="editTaskTitle" value="${escapeHtml(task.title)}" required />
+          </div>
+          <div class="field">
+            <label>Deadline</label>
+            <input id="editTaskDeadline" type="datetime-local" value="${toDateTimeLocal(task.deadline)}" required />
+          </div>
+          <div class="three-col">
+            <div class="field">
+              <label>ชั่วโมงที่ใช้</label>
+              <input id="editTaskDuration" type="number" min="0" value="${escapeHtml(task.duration ?? 0)}" />
+            </div>
+            <div class="field">
+              <label>คะแนน/น้ำหนักงาน</label>
+              <input id="editTaskScore" type="number" min="1" max="100" value="${escapeHtml(task.score_weight)}" required />
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">บันทึก</button>
+        </form>
+      `;
+      openModal();
+    }
+
+    async function updateTask(event, taskId) {
+      event.preventDefault();
+      try {
+        showLoading(true);
+        await apiFetch(`/api/task/${taskId}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            title: $("editTaskTitle").value.trim(),
+            deadline: $("editTaskDeadline").value,
+            duration: $("editTaskDuration").value === "" ? null : Number($("editTaskDuration").value),
+            score_weight: Number($("editTaskScore").value)
+          })
+        });
+        closeModal();
+        await refreshAll();
+        toast("อัปเดตงานสำเร็จ");
+      } catch (err) {
+        toast(`อัปเดตงานไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function toggleTaskStatus(taskId) {
+      try {
+        showLoading(true);
+        await apiFetch(`/api/task/${taskId}/status`, { method: "PATCH" });
+        await refreshAll();
+        toast("เปลี่ยนสถานะงานแล้ว");
+      } catch (err) {
+        toast(`เปลี่ยนสถานะไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function deleteTask(taskId) {
+      if (!confirm("ลบงานนี้ไหม?")) return;
+
+      try {
+        showLoading(true);
+        await apiFetch(`/api/task/${taskId}`, { method: "DELETE" });
+        await refreshAll();
+        toast("ลบงานสำเร็จ");
+      } catch (err) {
+        toast(`ลบงานไม่สำเร็จ: ${err.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function openModal() {
+      $("modalBackdrop").style.display = "flex";
+      $("modalBackdrop").setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      $("modalBackdrop").style.display = "none";
+      $("modalBackdrop").setAttribute("aria-hidden", "true");
+      $("modalBody").innerHTML = "";
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return escapeHtml(value);
+      return date.toLocaleString("th-TH", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    }
+
+    function toDateTimeLocal(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value).slice(0, 16);
+      const pad = n => String(n).padStart(2, "0");
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function setDefaultDeadline() {
+      const now = new Date();
+      now.setDate(now.getDate() + 7);
+      now.setHours(23, 59, 0, 0);
+      $("taskDeadline").value = toDateTimeLocal(now.toISOString());
+    }
+
+    $("modalBackdrop").addEventListener("click", (event) => {
+      if (event.target === $("modalBackdrop")) closeModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeModal();
+    });
+
+    setDefaultDeadline();
+    showApp();
+
+    if (state.user) {
+      refreshAll();
+    }
+  </script>
+</body>
+
+</html>
