@@ -21,6 +21,11 @@ def create_app():
     # =========================
     app.config.from_object("app.config.Config")
 
+    app.config.update(
+        SESSION_COOKIE_SAMESITE="None",
+        SESSION_COOKIE_SECURE=True
+    )
+
     # Render PostgreSQL compatibility
     database_url = os.getenv("DATABASE_URL")
 
