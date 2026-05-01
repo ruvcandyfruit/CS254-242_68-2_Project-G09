@@ -1,9 +1,9 @@
-import { store } from '../../assets/js/store.js';
+﻿import { store } from '../../assets/js/store.js';
 import { toast } from '../../assets/js/toast.js';
 import { initSelects, initSwitches, openDialog, closeDialog } from '../../assets/js/ui.js';
 
+const API_BASE = '';
 const TPL_URL = '../components/addTaskDialog/addTaskDialog.html';
-
 let injected = false;
 
 async function ensureTemplate() {
@@ -29,18 +29,24 @@ export async function mountAddTaskDialog(triggerSelector) {
 }
 
 function openDialogWithCourses() {
-  // refresh course options inside the template before cloning
   const tpl = document.querySelector('[data-dialog="addTask"]');
+  if (!tpl) return;
+
   const opts = tpl.querySelector('[data-course-options]');
   const { courses } = store.getState();
-  opts.innerHTML = courses.map((c) => `<div class="select-item" data-value="${c.id}">${c.code} — ${c.name}</div>`).join('');
-  // pre-select first course on the source template
-  const sel = tpl.querySelector('[data-select]');
-  if (courses[0]) sel.dataset.value = courses[0].id;
+  if (opts) {
+    opts.innerHTML = courses.map((c) =>
+      `<div class="select-item" data-value="${c.id}">${c.course_code || c.name}</div>`
+    ).join('');
+  }
 
-  // default deadline = today + 3 days
-  const d = new Date(); d.setDate(d.getDate() + 3);
-  tpl.querySelector('#atd-deadline').value = d.toISOString().slice(0, 10);
+  const sel = tpl.querySelector('[data-select]');
+  if (sel && courses[0]) sel.dataset.value = courses[0].id;
+
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  const deadlineInput = tpl.querySelector('#atd-deadline');
+  if (deadlineInput) deadlineInput.value = d.toISOString().slice(0, 10);
 
   openDialog('addTask');
 }
@@ -53,23 +59,38 @@ function bindForm(root) {
   const select = root.querySelector('[data-select][data-name="courseId"]');
   const swEl   = root.querySelector('[data-switch][data-name="emergency"]');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     const title = String(fd.get('title') || '').trim();
-    const courseId = select.dataset.value;
-    if (!title || !courseId) { toast.error('กรอกข้อมูลให้ครบ'); return; }
+    const courseId = select?.dataset.value;
 
-    store.addTask({
+    if (!title) { toast.error('กรุณากรอกชื่องาน'); return; }
+    if (!courseId) { toast.error('กรุณาเลือกวิชา'); return; }
+
+    const deadlineVal = String(fd.get('deadline') || '');
+    const body = {
       title,
-      courseId,
-      duration: Number(fd.get('duration')) || 0,
-      scoreWeight: Number(fd.get('scoreWeight')) || 0,
-      deadline: new Date(String(fd.get('deadline'))).toISOString(),
-      emergency: swEl.dataset.state === 'checked',
-      done: false,
-    });
-    toast.success('เพิ่มงานเรียบร้อย');
-    closeDialog('addTask');
+      course_id: Number(courseId),
+      duration: (Number(fd.get('duration')) || 0) * 60,
+      score_weight: Number(fd.get('scoreWeight')) || 0,
+      deadline: deadlineVal || null,
+      emergency: swEl?.dataset.state === 'checked',
+    };
+
+    try {
+      const res = await fetch(`${API_BASE}/api/task/`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error('API error');
+      toast.success('เพิ่มงานเรียบร้อย');
+      closeDialog('addTask');
+      store.refresh();
+    } catch {
+      toast.error('ไม่สามารถเพิ่มงานได้');
+    }
   });
 }

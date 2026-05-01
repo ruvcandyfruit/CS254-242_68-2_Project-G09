@@ -4,9 +4,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    # ทุกคนใช้เหมือนกัน
-    SECRET_KEY = 'snake&fish'   
+    SECRET_KEY = 'snake&fish'
 
-    # เปลี่ยนเป็นของตัวเองใน .env
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") 
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///workflow.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # ให้ session cookie ข้าม origin ได้ (จำเป็นสำหรับ demo localhost)
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SECURE = False

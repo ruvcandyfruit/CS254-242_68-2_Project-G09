@@ -58,6 +58,19 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; line-height: 1.2; }
   --shadow-md: 0 8px 24px -8px hsl(230 50% 30% / 0.10);
   --shadow-lg: 0 20px 50px -20px hsl(230 50% 30% / 0.18);
   --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* backward-compat aliases used by login.css / allTasks.css */
+  --background-linear: var(--gradient-primary);
+  --background-primary: hsl(var(--background));
+  --text-white: #ffffff;
+  --text-black: hsl(var(--foreground));
+  --blue: hsl(var(--primary));
+  --blue-hover: hsl(230 55% 48%);
+  --gray: hsl(var(--muted-foreground));
+  --gray-border: hsl(var(--border));
+  --gray-secondary: hsl(var(--secondary));
+  --gray-light: hsl(var(--muted));
+  --red: hsl(var(--destructive));
 }
 
 /* ---------- Animations ---------- */

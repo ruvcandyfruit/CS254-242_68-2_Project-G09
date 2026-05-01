@@ -1,9 +1,9 @@
-export function requireAuth() {
+﻿export function requireAuth() {
   const id =
     sessionStorage.getItem('user_id') || localStorage.getItem('user_id');
   if (!id) {
     // all protected pages sit one level deep (dashboard/, allTasks/ etc.)
-    window.location.href = '../login/login.html';
+    window.location.href = '/login/login.html';
     return false;
   }
   return true;

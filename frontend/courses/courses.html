@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>วิชาเรียน — WorkFlow</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../components/sidebar/sidebar.css" />
+  <link rel="stylesheet" href="../components/appShell/appShell.css" />
+  <link rel="stylesheet" href="courses.css" />
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark"><i data-lucide="graduation-cap"></i></div>
+      <div>
+        <div class="brand-title">WorkFlow</div>
+        <div class="brand-sub">จัดการ workload</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard/dashboard.html" data-route="dashboard"><i data-lucide="layout-dashboard"></i><span>ภาพรวม</span></a>
+      <a href="/allTasks/allTasks.html" data-route="tasks"><i data-lucide="list-checks"></i><span>รายการงาน</span></a>
+      <a href="/notifications/notifications.html" data-route="notifications"><i data-lucide="bell"></i><span>รายการแจ้งเตือน</span></a>
+      <a href="/courses/courses.html" data-route="courses" class="active"><i data-lucide="book-open"></i><span>วิชาเรียน</span></a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-row">
+        <div class="user-avatar" id="sidebarAvatar">S</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate" id="sidebarName">นักศึกษา</div>
+          <div class="text-xs text-muted-foreground truncate" id="sidebarEmail"></div>
+        </div>
+        <button class="btn btn-ghost btn-icon btn-sm" id="logoutBtn" aria-label="ออกจากระบบ">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Page content -->
+  <main class="app-main">
+    <div class="app-main-inner">
+
+      <div class="courses-header">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">วิชาเรียน</h1>
+          <p class="text-sm text-muted-foreground mt-1">จัดการรายวิชาของคุณ</p>
+        </div>
+        <button class="btn btn-primary" id="btnAddCourse">
+          <i data-lucide="plus"></i> เพิ่มวิชา
+        </button>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid">
+        <div class="courses-empty" id="coursesEmpty" style="display:none;">
+          <i data-lucide="book-open"></i>
+          <p>ยังไม่มีวิชาเรียน</p>
+          <p class="text-muted-foreground text-sm">กดปุ่ม "เพิ่มวิชา" เพื่อเริ่มต้น</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Add Course Modal -->
+<form class="modal-overlay" id="addCourseModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>เพิ่มวิชาใหม่</h2>
+      <button type="button" class="btn btn-ghost btn-icon btn-sm" id="modalClose">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="label" for="inputCode">รหัสวิชา</label>
+        <input class="input" type="text" id="inputCode" placeholder="CS254" />
+      </div>
+      <div class="field-group">
+        <label class="label" for="inputName">ชื่อวิชา <span class="text-destructive">*</span></label>
+        <input class="input" type="text" id="inputName" placeholder="Introduction to Software Engineering" required />
+      </div>
+      <div class="field-group">
+        <label class="label" for="inputWeight">น้ำหนักวิชา (หน่วยกิต)</label>
+        <input class="input" type="number" id="inputWeight" placeholder="3" min="1" max="9" value="3" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" id="btnCancel">ยกเลิก</button>
+      <button type="submit" class="btn btn-primary">บันทึก</button>
+    </div>
+  </div>
+</form>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="courses.js"></script>
+<script>
+  (function () {
+    if (!sessionStorage.getItem('user_id') && !localStorage.getItem('user_id')) {
+      window.location.href = '/login/login.html';
+      return;
+    }
+    const name = sessionStorage.getItem('username') || localStorage.getItem('username') || 'นักศึกษา';
+    const email = sessionStorage.getItem('email') || localStorage.getItem('email') || '';
+    const av = document.getElementById('sidebarAvatar');
+    const nm = document.getElementById('sidebarName');
+    const em = document.getElementById('sidebarEmail');
+    if (av) av.textContent = (name[0] || 'S').toUpperCase();
+    if (nm) nm.textContent = name;
+    if (em) em.textContent = email;
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+      sessionStorage.clear();
+      ['user_id','username','email'].forEach(k => localStorage.removeItem(k));
+      fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+      window.location.href = '/login/login.html';
+    });
+    lucide.createIcons();
+  })();
+</script>
+</body>
+</html>

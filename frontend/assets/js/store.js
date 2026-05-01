@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:5000';
+﻿const API_BASE = '';
 
 function loadUser() {
   const id =
@@ -19,7 +19,7 @@ function notify() {
 
 async function loadCourses() {
   try {
-    const res = await fetch(`${API_BASE}/api/course`, { credentials: 'include' });
+    const res = await fetch(`${API_BASE}/api/course/`, { credentials: 'include' });
     if (!res.ok) return;
     const data = await res.json();
     _state = { ..._state, courses: Array.isArray(data) ? data : data.courses ?? [] };
@@ -70,6 +70,22 @@ export const store = {
     return () => _listeners.delete(fn);
   },
   refresh,
+  async toggleTaskDone(id) {
+    try {
+      await fetch(`${API_BASE}/api/task/${id}/status`, { method: 'PATCH', credentials: 'include' });
+    } catch (e) {
+      console.warn('toggleTaskDone failed', e);
+    }
+    await refresh();
+  },
+  async deleteTask(id) {
+    try {
+      await fetch(`${API_BASE}/api/task/${id}`, { method: 'DELETE', credentials: 'include' });
+    } catch (e) {
+      console.warn('deleteTask failed', e);
+    }
+    await refresh();
+  },
   logout() {
     sessionStorage.clear();
     localStorage.removeItem('user_id');

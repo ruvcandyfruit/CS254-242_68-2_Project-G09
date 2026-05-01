@@ -1,5 +1,13 @@
 const MS_PER_DAY = 86400000;
 
+const TH_MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+export function formatDeadline(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return `${d.getDate()} ${TH_MONTHS[d.getMonth()]}`;
+}
+
 export function daysUntil(dateStr) {
   if (!dateStr) return Infinity;
   const due = new Date(dateStr);

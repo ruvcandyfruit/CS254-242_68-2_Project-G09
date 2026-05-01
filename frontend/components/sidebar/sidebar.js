@@ -1,4 +1,4 @@
-import { store } from '../../assets/js/store.js';
+﻿import { store } from '../../assets/js/store.js';
 import { loadFragment, renderIcons } from '../../assets/js/layout.js';
 
 export async function mountSidebar(target, activeRoute) {
@@ -37,7 +37,7 @@ export async function mountSidebar(target, activeRoute) {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       store.logout();
-      window.location.href = '../login/login.html';
+      window.location.href = '/login/login.html';
     });
   }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 
 <head>
@@ -24,10 +24,10 @@
       </div>
     </div>
     <nav class="sidebar-nav">
-      <a href="../dashboard/dashboard.html" data-route="dashboard"><i data-lucide="layout-dashboard"></i><span>ภาพรวม</span></a>
-      <a href="../allTasks/allTasks.html" data-route="tasks" class="active"><i data-lucide="list-checks"></i><span>รายการงาน</span></a>
-      <a href="../notifications/notifications.html" data-route="notifications"><i data-lucide="bell"></i><span>รายการแจ้งเตือน</span></a>
-      <a href="../courses/courses.html" data-route="courses"><i data-lucide="book-open"></i><span>วิชาเรียน</span></a>
+      <a href="/dashboard/dashboard.html" data-route="dashboard"><i data-lucide="layout-dashboard"></i><span>ภาพรวม</span></a>
+      <a href="/allTasks/allTasks.html" data-route="tasks" class="active"><i data-lucide="list-checks"></i><span>รายการงาน</span></a>
+      <a href="/notifications/notifications.html" data-route="notifications"><i data-lucide="bell"></i><span>รายการแจ้งเตือน</span></a>
+      <a href="/courses/courses.html" data-route="courses"><i data-lucide="book-open"></i><span>วิชาเรียน</span></a>
     </nav>
     <div class="sidebar-user">
       <div class="user-row">
@@ -221,7 +221,7 @@
     <script>
       (function () {
         if (!sessionStorage.getItem('user_id') && !localStorage.getItem('user_id')) {
-          window.location.href = '../login/login.html';
+          window.location.href = '/login/login.html';
           return;
         }
         const name = sessionStorage.getItem('username') || localStorage.getItem('username') || 'นักศึกษา';
@@ -235,8 +235,8 @@
         document.getElementById('logoutBtn')?.addEventListener('click', () => {
           sessionStorage.clear();
           ['user_id','username','email'].forEach(k => localStorage.removeItem(k));
-          fetch('http://127.0.0.1:5000/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
-          window.location.href = '../login/login.html';
+          fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+          window.location.href = '/login/login.html';
         });
         lucide.createIcons();
       })();

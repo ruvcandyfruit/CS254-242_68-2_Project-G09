@@ -1,4 +1,4 @@
-const tasks = [];
+﻿const tasks = [];
 const courses = [];
 let currentFilter = "all";
 let searchQuery = "";
@@ -32,7 +32,7 @@ function mapApiTask(t) {
     };
 }
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = '';
 async function fetchCourses() {
     try {
         const res = await fetch(`${API_BASE}/api/course`, {

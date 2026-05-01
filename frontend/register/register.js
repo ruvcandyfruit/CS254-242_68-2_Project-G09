@@ -1,11 +1,11 @@
-const form = document.getElementById('register-form');
+﻿const form = document.getElementById('register-form');
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmInput = document.getElementById('confirm');
 const submitBtn = form.querySelector('button[type="submit"]');
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = '';
 
 function showError(input, message) {
   let err = input.nextElementSibling;
@@ -95,7 +95,7 @@ form.addEventListener('submit', async (e) => {
     }
 
     if (res.ok) {
-      window.location.href = '../login/login.html';
+      window.location.href = '/login/login.html';
       return;
     }
 

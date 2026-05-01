@@ -1,4 +1,4 @@
-import { store } from '../../assets/js/store.js';
+﻿import { store } from '../../assets/js/store.js';
 import { daysUntil } from '../../assets/js/workload.js';
 import { renderIcons } from '../../assets/js/layout.js';
 
@@ -26,7 +26,7 @@ export function renderUrgentBanner(target) {
         <div class="ub-msg">${message}</div>
       </div>
       <div class="ub-actions">
-        <a class="btn btn-ghost btn-sm" href="../allTasks/allTasks.html">ดูงาน <i data-lucide="arrow-right"></i></a>
+        <a class="btn btn-ghost btn-sm" href="/allTasks/allTasks.html">ดูงาน <i data-lucide="arrow-right"></i></a>
         <button class="btn btn-ghost btn-icon btn-sm" data-dismiss aria-label="ปิดการแจ้งเตือน">
           <i data-lucide="x"></i>
         </button>

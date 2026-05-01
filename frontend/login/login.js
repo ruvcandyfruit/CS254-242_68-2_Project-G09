@@ -1,4 +1,4 @@
-const form = document.getElementById('login-form');
+﻿const form = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const emailError = document.getElementById('email-error');
@@ -43,7 +43,7 @@ passwordInput.addEventListener('input', () => {
   passwordError.textContent = validatePassword(passwordInput.value);
 });
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = '';
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -80,7 +80,7 @@ form.addEventListener('submit', async (e) => {
       storage.setItem('username', user.username ?? '');
       storage.setItem('email', user.email ?? emailVal);
 
-      window.location.href = '../dashboard/dashboard.html';
+      window.location.href = '/dashboard/dashboard.html';
     } else {
       passwordError.textContent = data.error || data.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
     }
