@@ -40,3 +40,6 @@ export function buildWeeklyWorkload(tasks, weeks = 6) {
 
   return buckets;
 }
+
+export const formatDeadline = (iso) =>
+  new Date(iso).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });

@@ -8,11 +8,21 @@ let injected = false;
 
 async function ensureTemplate() {
   if (injected) return;
+
   const res = await fetch(TPL_URL);
   const html = await res.text();
+
   const wrap = document.createElement('div');
   wrap.innerHTML = html;
-  document.body.appendChild(wrap.firstElementChild);
+
+  const dialog = wrap.querySelector('[data-dialog="addTask"]');
+
+  if (!dialog) {
+    throw new Error('addTask dialog template not found');
+  }
+
+  document.body.appendChild(dialog);
+
   injected = true;
 }
 
@@ -27,7 +37,6 @@ export async function mountAddTaskDialog(triggerSelector) {
     bindForm(e.detail.content);
   });
 }
-
 function openDialogWithCourses() {
   // refresh course options inside the template before cloning
   const tpl = document.querySelector('[data-dialog="addTask"]');
